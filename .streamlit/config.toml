@@ -13,7 +13,7 @@ serverPort = 8501
 
 [theme]
 base = "dark"
-primaryColor = "#a6d189"
-backgroundColor="#232634"
-secondaryBackgroundColor="#303446"
-textColor="#e78284"
+primaryColor = "#41c9e2"
+backgroundColor="#f7eedd"
+secondaryBackgroundColor="#FFECD6"
+textColor="#3559E0"

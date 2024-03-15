@@ -1,45 +1,23 @@
-# Streamlit Base
+# AG + AJ 2024 BPhO Computational Challenge Entry
 
-## Intended Use
+## Purpose 🥇
 
-### Gist
+Displays our work in a succint way for the BPhO Computational Challenge 2024
 
-This is a *template repository*, so its intended use is to create other repositories which **build off of this web app template**.
+## Dependencies 🖥️
 
-### Use cases
+`Python >= 3.8`
 
-Set up by default with an **authentication system** - this is suited for general websites, but of course also works for data display apps.
+Install Python version equal to or higher than 3.8 from https://www.python.org/downloads/ or from the Microsoft Store
 
+All library requirements are listed in ***requirements.txt***
 
-## Dependencies
+To install these, run:
 
-All requirements are listed in ***requirements.txt***
+`pip install -r requirements. txt`
 
+## Running the code 🔥
 
-## Authentication
+After installing dependencies (see above) run:
 
-### Authentication Widgets
-
-Uses streamlit-authenticator library for authentication widgets
-
-### Credentials
-
-Credentials are stored in ***config.yaml***
-
-
-## Config && Secrets
-
-### Config
-
-Configuration for Streamlit is stored in ***/.streamlit/config.toml***
-
-### Secrets
-
-Secrets for Streamlit environment are stored in ***/.streamlit/secrets.toml***
-
-
-## Github Actions
-
-### Pylint
-
-Default Pylint Github Action is set up in ***/.github/workflows/pylint.yml***
+`streamlit run streamlit_app.py`
