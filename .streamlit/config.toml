@@ -1,0 +1,19 @@
+[client]
+showErrorDetails = false
+toolbarMode = "viewer"
+
+[runner]
+magicEnabled = true
+
+[server]
+port = 8501
+
+[browser]
+serverPort = 8501
+
+[theme]
+base = "dark"
+primaryColor = "#a6d189"
+backgroundColor="#232634"
+secondaryBackgroundColor="#303446"
+textColor="#e78284"

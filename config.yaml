@@ -1,0 +1,14 @@
+cookie:
+  expiry_days: 0
+  key: credentials_key
+  name: credentials
+credentials:
+  usernames:
+    example: # delete after first user is created
+      email: test@example.com
+      logged_in: false
+      name: Example
+      password: $bVAxa0JEenI1TkdGdnl2Uw$8qbxUe51emMU4d2VFeJivw
+preauthorized:
+  emails:
+  - test@example.com
