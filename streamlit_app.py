@@ -9,7 +9,7 @@ import streamlit as st
 PAGE_TITLE = "AG + AJ BPhO Computational"
 PAGE_ICON = "🖥️"
 st.set_page_config(
-    PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="collapsed"
+    PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )
 
-st.title("Welcome to the AG + AJ BPhO Computational Challenge entry")
+st.title("Welcome to the AG + AJ BPhO Computational Challenge Entry")

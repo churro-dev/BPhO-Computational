@@ -20,4 +20,4 @@ To install these, run:
 
 After installing dependencies (see above) run:
 
-`streamlit run streamlit_app.py`
+`python -m streamlit run streamlit_app.py`

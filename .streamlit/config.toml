@@ -1,6 +1,7 @@
 [client]
 showErrorDetails = false
 toolbarMode = "viewer"
+showSidebarNavigation = true
 
 [runner]
 magicEnabled = true
