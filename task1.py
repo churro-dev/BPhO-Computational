@@ -71,9 +71,17 @@ u_y = launch_speed * sin_theta
 
 t_max = - ((u_y + sqrt((u_y ** 2) - (2 * g_strength * height))) / g_strength) # Own equation
 
+st.write(f"Determined time of flight: {t_max} seconds")
+
+time_increment = t_max / (datapoints - 1)
+
+st.write(f"Determined increment of time: {time_increment} seconds")
+
 t = pd.Series(
-    [((t_max / datapoints) * i) for i in range(datapoints + 1)]
+    [(time_increment * i) for i in range(datapoints)]
     )
+
+t
 
 # The rest is done using the provided equations, modified for a negative value of g
 
