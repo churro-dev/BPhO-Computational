@@ -1,0 +1,11 @@
+is_section=true
+
+[[pages]]
+path = "streamlit_app.py"
+name = "Home"
+icon = "🏡"
+
+[[pages]]
+path = "task1.py"
+name = "Task 1"
+icon = "📝"
