@@ -6,11 +6,11 @@ name = "Home"
 icon = "🏡"
 
 [[pages]]
-path = "task1.py"
+path = "pages/task1.py"
 name = "Task 1"
 icon = "📝"
 
 [[pages]]
-path = "task2.py"
+path = "pages/task2.py"
 name = "Task 2"
 icon = "📝"
