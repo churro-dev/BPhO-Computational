@@ -1,11 +1,9 @@
 # Imports
-
 import streamlit as st
 from st_pages import show_pages_from_config, add_indentation
 import pandas as pd
 import altair as alt
-
-from math import sin, cos, tan, atan, degrees, radians, sqrt
+from math import tan, atan, degrees, sqrt
 
 
 # Config page

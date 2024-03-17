@@ -24,7 +24,7 @@ show_pages_from_config()
 st.title("Task 2")
 st.subheader("Analytic model of drag-free projectile motion")
 
-launch_angle = st.slider(
+theta = st.slider(
     label = "Launch angle from horizontal (°)",
     min_value = 0.0,
     max_value = 90.0,
@@ -32,21 +32,21 @@ launch_angle = st.slider(
     step = 0.1,
 )
 
-g_strength = st.number_input(
+g = st.number_input(
     label = "Strength of gravity (m/s²)",
     min_value = 0.0,
     max_value = None,
     value = 9.81
 )
 
-launch_speed = st.number_input(
+u = st.number_input(
     label = "Launch speed (m/s)",
     min_value = 0.0,
     max_value = None,
     value = 10.0
 )
 
-height = st.number_input(
+h = st.number_input(
     label = "Initial height (m)",
     min_value = 0.0,
     max_value = None,
@@ -62,15 +62,15 @@ datapoints = st.number_input(
 
 # Downards direction is negative, input is positive
 # Gravity always acts downards, so negative g_strength to get acceleration
-acceleration = g_strength * -1
+acceleration = - g
 
 # For convenience
-sin_theta = sin(radians(launch_angle))
-cos_theta = cos(radians(launch_angle))
-tan_theta = tan(radians(launch_angle))
+sin_theta = sin(radians(theta))
+cos_theta = cos(radians(theta))
+tan_theta = tan(radians(theta))
 
 # Maximum horizontal range
-R = ((launch_speed ** 2) / g_strength)*((sin_theta * cos_theta) + (cos_theta * sqrt((sin_theta ** 2) + ((2 * g_strength * height)/(launch_speed ** 2)))))
+R = ((u ** 2) / g) * ((sin_theta * cos_theta) + (cos_theta * sqrt((sin_theta ** 2) + ((2 * g * h)/(u ** 2)))))
 
 st.write(f"Determined maximum horizontal range R: {R}m")
 
@@ -82,23 +82,25 @@ x_pos = pd.Series(
     [(distance_increment * i) for i in range(datapoints)]
 )
 
-x_a = ((launch_speed ** 2) / g_strength) * sin_theta * cos_theta
+x_a = ((u ** 2) / g) * sin_theta * cos_theta
 
-y_a = height + (((launch_speed ** 2) / (2 * g_strength)) * (sin_theta ** 2))
+y_a = h + (((u ** 2) / (2 * g)) * (sin_theta ** 2))
 
-T = R / (launch_speed * cos_theta)
+T = R / (u * cos_theta)
+
+st.write(f"Time of flight T: {T}s")
 
 t = pd.Series(
-    [x_pos_i / (launch_speed * cos_theta) for x_pos_i in x_pos]
+    [x_pos_i / (u * cos_theta) for x_pos_i in x_pos]
 )
 
 y_pos = pd.Series(
-    [height + (x_pos_i * tan_theta) - ((g_strength / (2 * (launch_speed ** 2))) * (1 + (tan_theta ** 2)) * (x_pos_i ** 2)) for x_pos_i in x_pos]
+    [h + (x_pos_i * tan_theta) - ((g / (2 * (u ** 2))) * (1 + (tan_theta ** 2)) * (x_pos_i ** 2)) for x_pos_i in x_pos]
 )
 
 pos = pd.DataFrame(
     {
-        "Time (s)": t,
+        "t / s": t,
         "x / m": x_pos,
         "y / m": y_pos,
         "x_a / m": x_a,
@@ -109,10 +111,11 @@ pos = pd.DataFrame(
 # Plotting the chart
 chart = (
     alt.Chart(pos)
-    .mark_line()
+    .mark_point()
     .encode(
         x=alt.X('x / m', title = "x / m"),
-        y=alt.Y('y / m', title = "y / m")
+        y=alt.Y('y / m', title = "y / m"),
+        color = "t / s"
     )
 )
 
@@ -121,8 +124,8 @@ point = (
     alt.Chart(pos)
     .mark_point(color='red', size=100)
     .encode(
-        x='x_a / m',
-        y='y_a / m'
+        x = "x_a / m",
+        y = "y_a / m"
     )
 )
 
