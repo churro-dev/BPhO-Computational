@@ -3,7 +3,7 @@
 # Imports
 
 import streamlit as st
-from st_pages import show_pages_from_config
+from st_pages import show_pages_from_config, add_indentation
 
 
 # Config page
@@ -12,6 +12,8 @@ PAGE_ICON = "🖥️"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )
+
+add_indentation()
 
 show_pages_from_config()
 

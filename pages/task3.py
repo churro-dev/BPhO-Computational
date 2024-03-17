@@ -1,7 +1,7 @@
 # Imports
 
 import streamlit as st
-from st_pages import show_pages_from_config
+from st_pages import show_pages_from_config, add_indentation
 import pandas as pd
 import altair as alt
 
@@ -15,12 +15,14 @@ st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )
 
+add_indentation()
+
 show_pages_from_config()
 
 # Main Content
 
-st.title("Task 2")
-st.subheader("Analytic model of drag-free projectile motion")
+st.title("Task 3")
+st.subheader("Analytic drag-free projectile motion model passing through a fixed position (X, Y)")
 
 X = st.number_input(
     label = "Target X in m",
@@ -47,14 +49,32 @@ a = -g
 
 u_min = sqrt(g) * sqrt(Y + sqrt((X**2) + (Y**2)))
 
-st.write(f"Minimum launch speed to reach target: {u_min} m/s")
+launch_speed_container = st.container(border = True)
 
-u = st.number_input(
-    label = "Launch speed (m/s)",
-    min_value = u_min,
-    max_value = None,
-    value = u_min
-)
+with launch_speed_container:
+
+    st.write(f"Minimum launch speed to reach target: {u_min} m/s")
+
+    apply_u = st.button("Apply minimum launch speed")
+
+    unapply_u = st.button("Unapply minimum launch speed")
+
+    if apply_u and not unapply_u:
+        u = st.number_input(
+            label = "Launch speed (m/s)",
+            min_value = u_min,
+            max_value = None,
+            value = u_min,
+            disabled = True
+        )
+    else:
+        u = st.number_input(
+            label = "Launch speed (m/s)",
+            min_value = u_min,
+            max_value = None,
+            value = u_min * 1.15,
+            disabled = False
+        )
 
 h = st.number_input(
     label = "Initial height (m)",
@@ -92,9 +112,12 @@ theta_highball_rad = atan(quadratic_v + quadratic_w)
 
 theta_lowball_rad = atan(quadratic_v - quadratic_w)
 
-st.write(f"Highball θ: {degrees(theta_highball_rad)}°")
-
-st.write(f"Lowball θ: {degrees(theta_lowball_rad)}°")
+if u_min != u:
+    st.markdown(f"θ<sub>highball</sub> = {degrees(theta_highball_rad)}°", unsafe_allow_html=True)
+    st.markdown(f"θ<sub>u<sub>min</sub></sub> = {degrees(theta_u_min_rad)}", unsafe_allow_html=True)
+    st.markdown(f"θ<sub>lowball</sub> = {degrees(theta_lowball_rad)}°", unsafe_allow_html=True)
+else:
+    st.markdown(f"θ<sub>u<sub>min</sub></sub> = θ<sub>highball</sub> = θ<sub>lowball</sub> = {degrees(theta_u_min_rad)}°", unsafe_allow_html=True)
 
 tan_theta_u_min = tan(theta_u_min_rad)
 

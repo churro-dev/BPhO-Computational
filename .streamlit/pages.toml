@@ -1,26 +1,33 @@
-is_section=true
-
 [[pages]]
 path = "streamlit_app.py"
 name = "Home"
 icon = "🏡"
 
 [[pages]]
+name = "Tasks"
+icon = "🖥️"
+is_section = true
+
+[[pages]]
 path = "pages/task1.py"
 name = "Task 1"
 icon = "📝"
+in_section = true
 
 [[pages]]
 path = "pages/task2.py"
 name = "Task 2"
 icon = "📝"
+in_section = true
 
 [[pages]]
 path = "pages/task3.py"
 name = "Task 3"
 icon = "📝"
+in_section = true
 
 [[pages]]
 path = "pages/task4.py"
 name = "Task 4"
 icon = "📝"
+in_section = true
