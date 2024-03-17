@@ -10,7 +10,7 @@ from math import sin, cos, tan, radians, sqrt
 
 # Config page
 PAGE_TITLE = "Task 2"
-PAGE_ICON = "🖥️"
+PAGE_ICON = "📝"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )
@@ -91,7 +91,7 @@ t = pd.Series(
 )
 
 y_pos = pd.Series(
-    [height + (x_pos_i * tan_theta) - (((g_strength) / (2 * (launch_speed ** 2))) * (1 + (tan_theta ** 2)) * (x_pos_i ** 2)) for x_pos_i in x_pos]
+    [height + (x_pos_i * tan_theta) - ((g_strength / (2 * (launch_speed ** 2))) * (1 + (tan_theta ** 2)) * (x_pos_i ** 2)) for x_pos_i in x_pos]
 )
 
 pos = pd.DataFrame(
@@ -105,13 +105,18 @@ pos = pd.DataFrame(
 )
 
 # Plotting the chart
-chart = alt.Chart(pos).mark_line().encode(
-    x='x / m',
-    y='y / m'
+chart = (
+    alt.Chart(pos)
+    .mark_line()
+    .encode(
+        x=alt.X('x / m', title = "x / m"),
+        y=alt.Y('y / m', title = "y / m")
+    )
 )
 
 # Adding a separate point
-point = (alt.Chart(pos)
+point = (
+    alt.Chart(pos)
     .mark_point(color='red', size=100)
     .encode(
         x='x_a / m',

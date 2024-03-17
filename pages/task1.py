@@ -10,7 +10,7 @@ from math import sin, cos, radians, sqrt
 
 # Config page
 PAGE_TITLE = "Task 1"
-PAGE_ICON = "🖥️"
+PAGE_ICON = "📝"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )

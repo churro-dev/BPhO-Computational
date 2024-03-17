@@ -14,3 +14,13 @@ icon = "📝"
 path = "pages/task2.py"
 name = "Task 2"
 icon = "📝"
+
+[[pages]]
+path = "pages/task3.py"
+name = "Task 3"
+icon = "📝"
+
+[[pages]]
+path = "pages/task4.py"
+name = "Task 4"
+icon = "📝"
