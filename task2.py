@@ -5,7 +5,7 @@ from st_pages import show_pages_from_config
 import pandas as pd
 import altair as alt
 
-from math import sin, cos, radians, sqrt
+from math import sin, cos, tan, radians, sqrt
 
 
 # Config page
@@ -59,54 +59,39 @@ datapoints = st.number_input(
 ) # determines how many points to calculate
 
 # Downards direction is negative, input is positive
-# Gravity always acts downards, so negative g_strength
+# Gravity always acts downards, so negative g_strength to get acceleration
 acceleration = g_strength * -1
 
 # For convenience
-cos_theta = cos(radians(launch_angle))
 sin_theta = sin(radians(launch_angle))
+cos_theta = cos(radians(launch_angle))
+tan_theta = tan(radians(launch_angle))
 
-r = (launch_speed ** 2) / g_strength
+# Maximum horizontal range
+R = ((launch_speed ** 2) / g_strength)*((sin_theta * cos_theta) + (cos_theta * sqrt((sin_theta ** 2) + ((2 * g_strength * height)/(launch_speed ** 2)))))
 
-# Initial speed in x & y directions
-u_x = launch_speed * cos_theta
-u_y = launch_speed * sin_theta
+st.write(f"Determined maximum horizontal range R: {R}m")
 
-t_max = - ((u_y + sqrt((u_y ** 2) - (2 * acceleration * height))) / acceleration) # Own equation
+distance_increment = R / (datapoints - 1)
 
-st.markdown(
-    f"Determined time of flight (t<sub>max</sub>): {t_max} seconds",
-    unsafe_allow_html=True
-)
-
-time_increment = t_max / (datapoints - 1)
-
-st.write(f"Determined increment of time (Δt): {time_increment} seconds")
-
-t = pd.Series(
-    [(time_increment * i) for i in range(datapoints)]
-)
-
-# The rest is done using the provided equations, modified for a negative value of g
+st.write(f"Increment of distance (Δx): {distance_increment}m")
 
 x_pos = pd.Series(
-    [round(u_x, 14) * t_i for t_i in t]
+    [(distance_increment * i) for i in range(datapoints)]
+)
+
+x_a = ((launch_speed ** 2) / g_strength) * sin_theta * cos_theta
+
+y_a = height + (((launch_speed ** 2) / (2 * g_strength)) * (sin_theta ** 2))
+
+T = R / (launch_speed * cos_theta)
+
+t = pd.Series(
+    [x_pos_i / (launch_speed * cos_theta) for x_pos_i in x_pos]
 )
 
 y_pos = pd.Series(
-    [height + (u_y * t_i) + (0.5 * acceleration * (t_i ** 2)) for t_i in t]
-)
-
-v_x = pd.Series(
-    [u_x for _ in t]
-)
-
-v_y = pd.Series(
-    [u_y + (acceleration * t_i) for t_i in t]
-)
-
-v = pd.Series(
-    [sqrt((v_x_i ** 2) + (v_y_i ** 2)) for v_x_i, v_y_i in zip(v_x, v_y)]
+    [height + (x_pos_i * tan_theta) - (((g_strength) / (2 * (launch_speed ** 2))) * (1 + (tan_theta ** 2)) * (x_pos_i ** 2)) for x_pos_i in x_pos]
 )
 
 pos = pd.DataFrame(
@@ -114,24 +99,27 @@ pos = pd.DataFrame(
         "Time (s)": t,
         "x / m": x_pos,
         "y / m": y_pos,
-        "X Velocity (m/s)": v_x,
-        "Y Velocity (m/s)": v_y,
-        "Velocity (m/s)": v
+        "x_a / m": x_a,
+        "y_a / m": y_a
     }
 )
 
-chart = (
-    alt.Chart(pos)
-    .mark_circle()
-    .encode(
-        x="x / m",
-        y="y / m",
-        color="Velocity (m/s)",
-        tooltip=[
-            "Time (s)", "x / m", "y / m", "X Velocity (m/s)", "Y Velocity (m/s)", "Velocity (m/s)"
-            ]
-        )
-    .resolve_scale(x="shared", y="shared")
+# Plotting the chart
+chart = alt.Chart(pos).mark_line().encode(
+    x='x / m',
+    y='y / m'
 )
 
-st.altair_chart(chart, use_container_width=True)
+# Adding a separate point
+point = (alt.Chart(pos)
+    .mark_point(color='red', size=100)
+    .encode(
+        x='x_a / m',
+        y='y_a / m'
+    )
+)
+
+# Combine the chart and the point
+st.altair_chart(chart + point, use_container_width=True)
+
+st.subheader("Hover over the line and apogee for more info 📝")

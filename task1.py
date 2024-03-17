@@ -63,8 +63,8 @@ datapoints = st.number_input(
 g_strength *= -1
 
 # For convenience
-cos_theta = cos(radians(launch_angle))
 sin_theta = sin(radians(launch_angle))
+cos_theta = cos(radians(launch_angle))
 
 # Initial speed in x & y directions
 u_x = launch_speed * cos_theta
@@ -82,7 +82,7 @@ time_increment = t_max / (datapoints - 1)
 st.write(f"Determined increment of time (Δt): {time_increment} seconds")
 
 t = pd.Series(
-    [(time_increment * i) for i in range(datapoints)]
+    [time_increment * i for i in range(datapoints)]
 )
 
 # The rest is done using the provided equations, modified for a negative value of g
@@ -120,7 +120,7 @@ pos = pd.DataFrame(
 
 chart = (
     alt.Chart(pos)
-    .mark_circle()
+    .mark_point()
     .encode(
         x="x / m",
         y="y / m",
@@ -133,3 +133,5 @@ chart = (
 )
 
 st.altair_chart(chart, use_container_width=True)
+
+st.subheader("Hover over the line for more info 📝")
