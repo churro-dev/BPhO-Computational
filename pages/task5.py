@@ -199,7 +199,8 @@ pos = pd.DataFrame(
         "x_R_max": x_R_max,
         "y_R_max": y_R_max,
         "x_bounding_parabola": x_bounding_parabola,
-        "y_bounding_parabola": y_bounding_parabola
+        "y_bounding_parabola": y_bounding_parabola,
+        "0": 0
     }
 )
 
@@ -207,39 +208,43 @@ base = alt.Chart(pos)
 
 chart = alt.layer(
     base.mark_line(
-        color = "grey"
+        color = 'grey'
     )
     .encode(
-        x = alt.X("x_u_min", title = "x"),
-        y = alt.Y('y_u_min', title = "y")
+        x = 'x_u_min',
+        y = 'y_u_min'
     ),
     base.mark_line(
-        color = "blue"
+        color = 'blue'
     )
     .encode(
         x = 'x_highball',
         y = 'y_highball'
     ),
     base.mark_line(
-        color = "green"
+        color = 'green'
     )
     .encode(
         x = 'x_lowball',
         y = 'y_lowball'
     ),
     base.mark_line(
-        color = "red"
+        color = 'red'
     )
     .encode(
         x = 'x_R_max',
         y = 'y_R_max'
     ),
     base.mark_line(
-        color = "pink"
+        color = 'pink'
     )
     .encode(
         x = 'x_bounding_parabola',
         y = 'y_bounding_parabola'
+    ),
+    base.mark_point().encode(
+        x = alt.X("0", title = "x / m"),
+        y = alt.Y("0", title = "y / m")
     )
 )
 
