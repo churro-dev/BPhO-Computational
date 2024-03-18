@@ -208,6 +208,18 @@ base = alt.Chart(pos)
 
 chart = alt.layer(
     base.mark_line(
+        color = 'pink',
+        strokeDash = [5, 5]
+    )
+    .encode(
+        x = 'x_bounding_parabola',
+        y = 'y_bounding_parabola'
+    ),
+    base.mark_point().encode(
+        x = alt.X("0", title = "x / m"),
+        y = alt.Y("0", title = "y / m")
+    ),
+    base.mark_line(
         color = 'grey'
     )
     .encode(
@@ -229,22 +241,12 @@ chart = alt.layer(
         y = 'y_lowball'
     ),
     base.mark_line(
-        color = 'red'
+        color = 'red',
+        strokeDash = [5, 5]
     )
     .encode(
         x = 'x_R_max',
         y = 'y_R_max'
-    ),
-    base.mark_line(
-        color = 'pink'
-    )
-    .encode(
-        x = 'x_bounding_parabola',
-        y = 'y_bounding_parabola'
-    ),
-    base.mark_point().encode(
-        x = alt.X("0", title = "x / m"),
-        y = alt.Y("0", title = "y / m")
     )
 )
 
