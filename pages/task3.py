@@ -20,7 +20,7 @@ show_pages_from_config()
 # Main Content
 
 st.title("Task 3")
-st.subheader("Analytic drag-free projectile motion model passing through a fixed position (X, Y)")
+st.subheader("Drag-free projectile motion model passing through a fixed position (X, Y)")
 
 X = st.number_input(
     label = "Target X in m",
