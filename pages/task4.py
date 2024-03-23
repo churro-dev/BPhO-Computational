@@ -23,68 +23,61 @@ st.title("Task 4")
 st.subheader("Drag-free comparison to trajectory for maximal horizontal range R")
 
 theta_deg = st.slider(
-    label = "Launch angle from horizontal (°)",
-    min_value = 0.0,
-    max_value = 90.0,
-    value = 60.0,
-    step = 0.1,
+    label="Launch angle from horizontal (°)",
+    min_value=0.0,
+    max_value=90.0,
+    value=60.0,
+    step=0.1,
 )
 
 g = st.number_input(
-    label = "Strength of gravity (m/s²)",
-    min_value = 0.0,
-    max_value = None,
-    value = 9.81
+    label="Strength of gravity (m/s²)", min_value=0.0, max_value=None, value=9.81
 )
 
 u = st.number_input(
-    label = "Launch speed (m/s)",
-    min_value = 0.0,
-    max_value = None,
-    value = 10.0
+    label="Launch speed (m/s)", min_value=0.0, max_value=None, value=10.0
 )
 
 h = st.number_input(
-    label = "Initial height (m)",
-    min_value = 0.0,
-    max_value = None,
-    value = 2.0
+    label="Initial height (m)", min_value=0.0, max_value=None, value=2.0
 )
 
 datapoints = st.number_input(
-    label = "Number of datapoints",
-    min_value = 1,
-    max_value = 5000,
-    value = 1000
-) # determines how many points to calculate
+    label="Number of datapoints", min_value=1, max_value=5000, value=1000
+)  # determines how many points to calculate
 
 # Downards direction is negative, input is positive
 # Gravity always acts downards, so negative g_strength to get acceleration
-acceleration = - g
+acceleration = -g
 
 # For convenience
 sin_theta_R = sin(radians(theta_deg))
 cos_theta_R = cos(radians(theta_deg))
 tan_theta_R = tan(radians(theta_deg))
 
-R = ((u ** 2) / g) * ((sin_theta_R * cos_theta_R) + (cos_theta_R * sqrt((sin_theta_R ** 2) + ((2 * g * h)/(u ** 2)))))
+R = ((u**2) / g) * (
+    (sin_theta_R * cos_theta_R)
+    + (cos_theta_R * sqrt((sin_theta_R**2) + ((2 * g * h) / (u**2))))
+)
 
 st.write(f"R = {R}")
 
-x_a_R = ((u ** 2) / g) * sin_theta_R * cos_theta_R
+x_a_R = ((u**2) / g) * sin_theta_R * cos_theta_R
 
-y_a_R = h + (((u ** 2) / (2 * g)) * (sin_theta_R ** 2))
+y_a_R = h + (((u**2) / (2 * g)) * (sin_theta_R**2))
 
-R_max = ((u ** 2) / g) * sqrt(1 + ((2 * h * g) / (u ** 2)))
+R_max = ((u**2) / g) * sqrt(1 + ((2 * h * g) / (u**2)))
 
 st.markdown(f"R<sub>max</sub> = {R_max}", unsafe_allow_html=True)
 
-theta_R_max_rad = asin(1 / sqrt(2 + ((2 * g * h) / (u ** 2))))
+theta_R_max_rad = asin(1 / sqrt(2 + ((2 * g * h) / (u**2))))
 
 cos_theta_R_max = cos(theta_R_max_rad)
 tan_theta_R_max = tan(theta_R_max_rad)
 
-st.markdown(f"θ<sub>R<sub>max</sub></sub> = {degrees(theta_R_max_rad)}", unsafe_allow_html=True)
+st.markdown(
+    f"θ<sub>R<sub>max</sub></sub> = {degrees(theta_R_max_rad)}", unsafe_allow_html=True
+)
 
 T_R = R / (u * cos_theta_R)
 
@@ -102,25 +95,29 @@ st.write(f"Increment of distance (Δx): {distance_increment_R}m")
 
 st.markdown(f"Δx<sub>max</sub>: {distance_increment_R_max}m", unsafe_allow_html=True)
 
-x_pos_R = pd.Series(
-    [(distance_increment_R * i) for i in range(datapoints)]
-)
+x_pos_R = pd.Series([(distance_increment_R * i) for i in range(datapoints)])
 
-x_pos_R_max = pd.Series(
-    [(distance_increment_R_max * i) for i in range(datapoints)]
-)
+x_pos_R_max = pd.Series([(distance_increment_R_max * i) for i in range(datapoints)])
 
 y_pos_R = pd.Series(
-    [h + (x_pos_R_i * tan_theta_R) - ((g / (2 * (u ** 2))) * (1 + (tan_theta_R ** 2)) * (x_pos_R_i ** 2)) for x_pos_R_i in x_pos_R]
+    [
+        h
+        + (x_pos_R_i * tan_theta_R)
+        - ((g / (2 * (u**2))) * (1 + (tan_theta_R**2)) * (x_pos_R_i**2))
+        for x_pos_R_i in x_pos_R
+    ]
 )
 
 y_pos_R_max = pd.Series(
-    [h + (x_pos_R_max_i * tan_theta_R_max) - ((g / (2 * (u ** 2))) * (1 + (tan_theta_R_max ** 2)) * (x_pos_R_max_i ** 2)) for x_pos_R_max_i in x_pos_R_max]
+    [
+        h
+        + (x_pos_R_max_i * tan_theta_R_max)
+        - ((g / (2 * (u**2))) * (1 + (tan_theta_R_max**2)) * (x_pos_R_max_i**2))
+        for x_pos_R_max_i in x_pos_R_max
+    ]
 )
 
-t_R = pd.Series(
-    [x_pos_R_i / (u * cos_theta_R) for x_pos_R_i in x_pos_R]
-)
+t_R = pd.Series([x_pos_R_i / (u * cos_theta_R) for x_pos_R_i in x_pos_R])
 
 t_R_max = pd.Series(
     [x_pos_R_max_i / (u * cos_theta_R_max) for x_pos_R_max_i in x_pos_R_max]
@@ -135,37 +132,22 @@ pos = pd.DataFrame(
         "y_R / m": y_pos_R,
         "y_R_max / m": y_pos_R_max,
         "x_a_R / m": x_a_R,
-        "y_a_R / m": y_a_R
+        "y_a_R / m": y_a_R,
     }
 )
 
 base = alt.Chart(pos)
 
 chart = alt.layer(
-    base.mark_point(
-        color = "blue"
-    )
-    .encode(
-        x = alt.X("x_R / m", title = "x / m"),
-        y = alt.Y("y_R / m", title = "y / m"),
-        strokeWidth = alt.StrokeWidth("t_R / s", title = "t / s")
+    base.mark_point(color="blue").encode(
+        x=alt.X("x_R / m", title="x / m"),
+        y=alt.Y("y_R / m", title="y / m"),
+        strokeWidth=alt.StrokeWidth("t_R / s", title="t / s"),
     ),
     base.mark_point(
-        color = "red",
-    )
-    .encode(
-        x = "x_R_max / m",
-        y = 'y_R_max / m',
-        strokeWidth = "t_R_max / s"
-    ),
-    base.mark_point(
-        color = "black",
-        size = 200
-    )
-    .encode(
-        x = "x_a_R / m",
-        y = "y_a_R / m"
-    )
+        color="red",
+    ).encode(x="x_R_max / m", y="y_R_max / m", strokeWidth="t_R_max / s"),
+    base.mark_point(color="black", size=200).encode(x="x_a_R / m", y="y_a_R / m"),
 )
 
 st.altair_chart(chart, use_container_width=True)
