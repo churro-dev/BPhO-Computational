@@ -1,0 +1,10 @@
+name: Python Linting (Push)
+on: [push, pull_request]
+jobs:
+  lint_code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking Code
+        uses: sunnysid3up/python-linter@master
+        with:
+          source: "pages"
