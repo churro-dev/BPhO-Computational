@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checking Code
-        uses: sunnysid3up/python-linter@master
+      - uses: actions/checkout@v4.1.2
+      - uses: sunnysid3up/python-linter@master
         with:
           source: "./pages/"
