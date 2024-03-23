@@ -4,8 +4,8 @@ jobs:
   lint_code:
     runs-on: ubuntu-latest
     steps:
-      - name: Checking Code
-      - uses: actions/checkout@master
-      - uses: sunnysid3up/python-linter@master
-        with:
-          source: "./pages/"
+     - uses: actions/checkout@v4
+     - name: Python Linter
+       uses: sunnysid3up/python-linter@master
+       with:
+         source: "pages"
