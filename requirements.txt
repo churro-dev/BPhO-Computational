@@ -1,2 +1,5 @@
 streamlit
 st-pages
+pandas
+numpy
+altair
