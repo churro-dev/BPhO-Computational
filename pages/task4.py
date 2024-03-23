@@ -1,10 +1,10 @@
 # Imports
-import streamlit as st
-from st_pages import show_pages_from_config, add_indentation
-import pandas as pd
-import altair as alt
-from math import sin, cos, tan, asin, degrees, radians, sqrt
+from math import asin, cos, degrees, radians, sin, sqrt, tan
 
+import altair as alt
+import pandas as pd
+import streamlit as st
+from st_pages import add_indentation, show_pages_from_config
 
 # Config page
 PAGE_TITLE = "Task 4"
