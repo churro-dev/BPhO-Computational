@@ -14,7 +14,7 @@ All library requirements are listed in ***requirements.txt***
 
 To install these, run:
 
-`pip install -r requirements. txt`
+`pip install -r requirements.txt`
 
 ## Running the code 🔥
 
