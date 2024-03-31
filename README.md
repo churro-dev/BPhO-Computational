@@ -6,6 +6,7 @@ Displays our work in a succint way for the BPhO Computational Challenge 2024
 
 
 ### Notebook with later challenges are accessible here https://colab.research.google.com/drive/1ciC0e05X-3hfYzuuqUKVhTKED0A7FaRc
+### Use hosted runtime, no need to install anything
 
 ### How to run
 1. Install python from http://www.python.org/downloads - Newer than v3.8
