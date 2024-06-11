@@ -2,7 +2,7 @@
 
 ## Purpose 🥇
 
-Displays our work in a succint way for the BPhO Computational Challenge 2024
+Displays our work in a succinct way for the BPhO Computational Challenge 2024
 
 
 ### Notebook with later challenges are accessible here https://colab.research.google.com/drive/1ciC0e05X-3hfYzuuqUKVhTKED0A7FaRc
