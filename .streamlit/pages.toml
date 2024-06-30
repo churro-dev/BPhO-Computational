@@ -37,3 +37,15 @@ path = "pages/task5.py"
 name = "Task 5"
 icon = "📝"
 in_section = true
+
+[[pages]]
+path = "pages/task6.py"
+name = "Task 6"
+icon = "📝"
+in_section = true
+
+[[pages]]
+path = "pages/task7.py"
+name = "Task 7"
+icon = "📝"
+in_section = true

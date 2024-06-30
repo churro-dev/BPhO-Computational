@@ -26,17 +26,17 @@ st.subheader("Analytic model of drag-free projectile motion")
 theta = st.slider(
     label="Launch angle from horizontal (°)",
     min_value=0.0,
-    max_value=90.0,
+    max_value=89.9,
     value=45.0,
     step=0.1,
 )
 
 g = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.0, max_value=None, value=9.81
+    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
 )
 
 u = st.number_input(
-    label="Launch speed (m/s)", min_value=0.0, max_value=None, value=10.0
+    label="Launch speed (m/s)", min_value=0.1, max_value=None, value=10.0
 )
 
 h = st.number_input(
@@ -65,8 +65,6 @@ R = ((u**2) / g) * (
 st.write(f"Determined maximum horizontal range R: {R}m")
 
 distance_increment = R / (datapoints - 1)
-
-st.write(f"Increment of distance (Δx): {distance_increment}m")
 
 x_pos = pd.Series([(distance_increment * i) for i in range(datapoints)])
 

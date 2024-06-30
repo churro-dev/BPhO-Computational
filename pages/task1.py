@@ -32,7 +32,7 @@ launch_angle = st.slider(
 )
 
 g_strength = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.0, max_value=None, value=9.81
+    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
 )
 
 launch_speed = st.number_input(
@@ -103,7 +103,7 @@ chart = (
     .encode(
         x="x / m",
         y="y / m",
-        color="Velocity (m/s)",
+        color="Time (s)",
         tooltip=[
             "Time (s)",
             "x / m",

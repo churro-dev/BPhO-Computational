@@ -29,7 +29,7 @@ X = st.number_input(label="Target X in m", min_value=0.0, max_value=None, value=
 Y = st.number_input(label="Target Y in m", min_value=0.0, max_value=None, value=300.0)
 
 g = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.0, max_value=None, value=9.81
+    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
 )
 
 a = -g
