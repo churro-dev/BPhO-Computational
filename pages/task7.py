@@ -151,6 +151,6 @@ if theme != None:
 
         st.altair_chart(chart, use_container_width=True)
         
-        st.markdown(f"###### p.s. the line for which the angle is not mentioned is always the first tag selected: {theta_degs[0]}°")
+        st.markdown(f"###### p.s. the line for which the angle is not mentioned is the first tag selected: {theta_degs[0]}°")
 
         st.subheader("Hover over each line for more info 📝")
