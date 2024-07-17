@@ -120,7 +120,7 @@ if not plot_points:
 else:
     chart = (
         alt.Chart(pos)
-        .mark_point()
+        .mark_point(size=10)
         .encode(
             x="x / m",
             y="y / m",
