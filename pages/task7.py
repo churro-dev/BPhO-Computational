@@ -25,11 +25,11 @@ st.title("Task 7")
 st.subheader("Range of projectile vs. time - maxima & minima")
 
 g = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
 )
 
 u = st.number_input(
-    label="Launch speed (m/s)", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
 )
 
 h = 0
@@ -39,7 +39,7 @@ datapoints = st.number_input(
 )  # determines how many points to calculate
 
 angles = st_tags(
-    label='Angles (type & press **enter** to add more)',
+    label='Angles (°) (type & press **enter** to add more)',
     text='Press enter to add more',
     value=['30', '45', '60', '70.53', '78', '85'],
     maxtags = 148,
@@ -218,19 +218,19 @@ if theme != None:
                 angle_point_min_r_search_str = f"{angle}_min_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
                 angle_point_max_t_search_str = f"{angle}_max_t".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
                 angle_point_max_r_search_str = f"{angle}_max_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                chart_one += base.mark_point(color="pink" if color!="pink" else "purple", shape="diamond", size=10).encode(
+                chart_one += base.mark_point(color="pink" if color!="pink" else "purple", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_min_x_search_str),
                     y=alt.Y(angle_point_min_y_search_str),
                 )
-                chart_one += base.mark_point(color="black" if color!="black" else "gray", shape="diamond", size=10).encode(
+                chart_one += base.mark_point(color="black" if color!="black" else "gray", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_max_x_search_str),
                     y=alt.Y(angle_point_max_y_search_str),
                 )
-                chart_two += base.mark_point(color="pink" if color!="pink" else "purple", shape="diamond", size=10).encode(
+                chart_two += base.mark_point(color="pink" if color!="pink" else "purple", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_min_t_search_str),
                     y=alt.Y(angle_point_min_r_search_str),
                 )
-                chart_two += base.mark_point(color="black" if color!="black" else "gray", shape="diamond", size=10).encode(
+                chart_two += base.mark_point(color="black" if color!="black" else "gray", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_max_t_search_str),
                     y=alt.Y(angle_point_max_r_search_str),
                 )

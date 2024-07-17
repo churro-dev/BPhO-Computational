@@ -19,6 +19,6 @@ show_pages_from_config()
 
 # Main Content
 
-st.title("Welcome to the AG + AJ BPhO Computational Challenge Entry")
+st.title("Welcome to our BPhO Computational Challenge entry.")
 
-st.subheader("Please navigate to another page to begin viewing the task completions 🔥")
+st.subheader("Please navigate to another page to begin viewing the task completions.")

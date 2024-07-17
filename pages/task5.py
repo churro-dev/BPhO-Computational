@@ -24,22 +24,26 @@ st.subheader(
     "Upgraded drag-free projectile motion model passing through a fixed position (X, Y)"
 )
 
-X = st.number_input(label="Target X in m", min_value=0.0, max_value=None, value=1000.0)
+X = st.number_input(label="Target $X$ / $m$", min_value=0.0, max_value=None, value=1000.0) # spacing different here and below to make even
 
-Y = st.number_input(label="Target Y in m", min_value=0.0, max_value=None, value=300.0)
+Y = st.number_input(label="Target$\ Y$ / $m$", min_value=0.0, max_value=None, value=300.0) # spacing different here and above to make even
 
 g = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
 )
 
 a = -g
 
-u_min = sqrt(g) * sqrt(Y + sqrt((X**2) + (Y**2)))
+h = st.number_input(
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=0.0
+)
+
+u_min = (sqrt(g) * sqrt(Y + sqrt((X**2) + (Y**2))))+0.0000000000001 # accounts for accuracy limitation causing domain error in theta_u_min_rad calculation
 
 launch_speed_container = st.container(border=True)
 
 with launch_speed_container:
-    st.write(f"Minimum launch speed to reach target: {u_min} m/s")
+    st.markdown(f"Minimum launch speed to reach target$\ u = {u_min:.2f} " + r"ms^{-1}$")
 
     apply_u = st.button("Apply minimum launch speed")
 
@@ -47,7 +51,7 @@ with launch_speed_container:
 
     if apply_u and not unapply_u:
         u = st.number_input(
-            label="Launch speed (m/s)",
+            label="Launch speed$\ u$ / $ms^{-1}$",
             min_value=u_min,
             max_value=None,
             value=u_min,
@@ -55,22 +59,23 @@ with launch_speed_container:
         )
     else:
         u = st.number_input(
-            label="Launch speed (m/s)",
+            label="Launch speed$\ u$ / $ms^{-1}$",
             min_value=u_min,
             max_value=None,
             value=u_min * 1.15,
             disabled=False,
         )
 
-h = st.number_input(
-    label="Initial height (m)", min_value=0.0, max_value=None, value=0.0
-)
-
 datapoints = st.number_input(
     label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
 
-theta_u_min_rad = atan((Y + sqrt((X**2) + (Y**2))) / X)
+# theta_u_min_rad = atan((Y + sqrt((X**2) + (Y**2))) / X)
+# theta_u_min_rad = atan(((u_min**2)-(sqrt((u_min**4)-(g*((g*(X**2))+(2*Y*(u_min**2)))))))/(g*X))1
+theta_u_min_rad = atan(((u_min**2)/(g*X))-sqrt((((u_min**2)*((u_min**2)-(2*g*(Y-h))))/((g**2)*(X**2)))-1))
+# thank you to John Alexiou on the forum:
+# https://physics.stackexchange.com/questions/56265/how-to-get-the-angle-needed-for-a-projectile-to-pass-through-a-given-point-for-t
+# for having a working equation, as the challenge creators did not include the necessary equation for when you vary height
 
 sin_theta_u_min = sin(theta_u_min_rad)
 cos_theta_u_min = cos(theta_u_min_rad)
@@ -124,19 +129,17 @@ x_highball = pd.Series([(delta_x_highball * i) for i in range(datapoints)])
 
 if u_min != u:
     st.markdown(
-        f"θ<sub>highball</sub> = {degrees(theta_highball_rad)}°", unsafe_allow_html=True
+        r"$\theta_{\text{highball}} = " + f"{degrees(theta_highball_rad):.2f}\degree = " + f"{theta_highball_rad:.2f}" + r"\ \text{rad}$"
     )
     st.markdown(
-        f"θ<sub>u<sub>min</sub></sub> = {degrees(theta_u_min_rad)}",
-        unsafe_allow_html=True,
+        r"$\theta_{u_{\text{min}}} = " + f"{degrees(theta_u_min_rad):.2f}\degree = " + f"{theta_u_min_rad:.2f}" + r"\ \text{rad}$"
     )
     st.markdown(
-        f"θ<sub>lowball</sub> = {degrees(theta_lowball_rad)}°", unsafe_allow_html=True
+        r"$\theta_{\text{lowball}} = " + f"{degrees(theta_lowball_rad):.2f}\degree = " + f"{theta_lowball_rad:.2f}" + r"\ \text{rad}$"
     )
 else:
     st.markdown(
-        f"θ<sub>u<sub>min</sub></sub> = θ<sub>highball</sub> = θ<sub>lowball</sub> = {degrees(theta_u_min_rad)}°",
-        unsafe_allow_html=True,
+        r"$\theta_{\text{highball}} = \theta_{u_{\text{min}}} = \theta_{\text{lowball}} = " + f"{degrees(theta_u_min_rad)}\degree = " + f"{theta_u_min_rad:.2f}" + r"\ \text{rad}$"
     )
 
 tan_theta_u_min = tan(theta_u_min_rad)
@@ -149,6 +152,16 @@ y_u_min = pd.Series(
         for x_u_min_i in x_u_min
     ]
 )
+# # the above is equivalent to the below if you shift the below up by $h$:
+# y_u_min = pd.Series(
+#     [
+#         (
+#             (x_u_min_i * ((Y + sqrt((X**2)+(Y**2)))/(X)))
+#             - ((x_u_min_i**2) * ((sqrt((X**2)+(Y**2)))/(X**2)))
+#         )
+#         for x_u_min_i in x_u_min
+#     ]
+# )
 
 tan_theta_highball = tan(theta_highball_rad)
 
@@ -174,15 +187,13 @@ y_lowball = pd.Series(
 
 R_max = ((u**2) / g) * sqrt(1 + ((2 * h * g) / (u**2)))
 
-st.markdown(f"R<sub>max</sub> = {R_max}", unsafe_allow_html=True)
+st.markdown(r"$R_{\text{max}} = " + f"{R_max:.2f}m$")
 
 theta_R_max_rad = asin(1 / sqrt(2 + ((2 * g * h) / (u**2))))
 
 tan_theta_R_max = tan(theta_R_max_rad)
 
-st.markdown(
-    f"θ<sub>R<sub>max</sub></sub> = {degrees(theta_R_max_rad)}", unsafe_allow_html=True
-)
+st.markdown(r"$\theta_{R_{\text{max}}} = " + f"{degrees(theta_R_max_rad):.2f}\degree = " + f"{theta_R_max_rad:.2f}" + r"\ \text{rad}$")
 
 delta_x_R_max = R_max / (datapoints - 1)
 
@@ -201,7 +212,7 @@ x_bounding_parabola = x_R_max
 
 y_bounding_parabola = pd.Series(
     [
-        ((u**2) / (2 * g)) - ((g / (2 * (u**2))) * (x_b_p_i**2))
+        (h + ((u**2) / (2 * g)) - ((g / (2 * (u**2))) * (x_b_p_i**2)))
         for x_b_p_i in x_bounding_parabola
     ]
 )
@@ -231,7 +242,7 @@ if not plot_points:
         base.mark_line(color="pink", strokeDash=[5, 5], strokeWidth=3).encode(
             x="x_bounding_parabola", y="y_bounding_parabola"
         ),
-        base.mark_line().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")),
+        base.mark_line().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")), # ensures this point is not actually plotted as it's just for titling axis
         base.mark_line(color="grey", strokeWidth=3).encode(x="x_u_min", y="y_u_min"),
         base.mark_line(color="blue", strokeWidth=3).encode(x="x_highball", y="y_highball"),
         base.mark_line(color="green", strokeWidth=3).encode(x="x_lowball", y="y_lowball"),
@@ -242,7 +253,7 @@ else:
         base.mark_point(color="pink", size=5).encode(
             x="x_bounding_parabola", y="y_bounding_parabola"
         ),
-        base.mark_point().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")),
+        base.mark_line().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")), # ensures this point is not actually plotted as it's just for titling axis
         base.mark_point(color="grey", size=5).encode(x="x_u_min", y="y_u_min"),
         base.mark_point(color="blue", size=5).encode(x="x_highball", y="y_highball"),
         base.mark_point(color="green", size=5).encode(x="x_lowball", y="y_lowball"),

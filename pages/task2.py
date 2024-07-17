@@ -24,23 +24,23 @@ st.title("Task 2")
 st.subheader("Analytic model of drag-free projectile motion")
 
 theta = st.slider(
-    label="Launch angle from horizontal (°)",
+    label="Launch angle from horizontal /$\ $°", # even out spacing
     min_value=0.0,
-    max_value=89.9,
+    max_value=90.0,
     value=45.0,
     step=0.1,
 )
 
 g = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
 )
 
 u = st.number_input(
-    label="Launch speed (m/s)", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
 )
 
 h = st.number_input(
-    label="Initial height (m)", min_value=0.0, max_value=None, value=0.0
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
 )
 
 datapoints = st.number_input(
@@ -62,8 +62,6 @@ R = ((u**2) / g) * (
     + (cos_theta * sqrt((sin_theta**2) + ((2 * g * h) / (u**2))))
 )
 
-st.write(f"Determined maximum horizontal range R: {R}m")
-
 distance_increment = R / (datapoints - 1)
 
 x_pos = pd.Series([(distance_increment * i) for i in range(datapoints)])
@@ -73,8 +71,6 @@ x_a = ((u**2) / g) * sin_theta * cos_theta
 y_a = h + (((u**2) / (2 * g)) * (sin_theta**2))
 
 T = R / (u * cos_theta)
-
-st.write(f"Time of flight T: {T}s")
 
 t = pd.Series([x_pos_i / (u * cos_theta) for x_pos_i in x_pos])
 
@@ -86,6 +82,12 @@ y_pos = pd.Series(
         for x_pos_i in x_pos
     ]
 )
+
+st.markdown(r"Launch elevation$\ \theta = " + f"{radians(theta):.2f}\ " + r"\text{rad}$")
+st.markdown(f"Range$\ R = {R:.2f}m$")
+st.markdown(f"Apogee$\ x_a = {x_a:.2f}m$")
+st.markdown(f"Apogee$\ y_a = {y_a:.2f}m$")
+st.markdown(f"Time of flight$\ T = {T:.2f}s$")
 
 pos = pd.DataFrame(
     {"t / s": t, "x / m": x_pos, "y / m": y_pos, "x_a / m": x_a, "y_a / m": y_a}

@@ -23,23 +23,23 @@ st.title("Task 4")
 st.subheader("Drag-free comparison to trajectory for maximal horizontal range R")
 
 theta_deg = st.slider(
-    label="Launch angle from horizontal (°)",
+    label="Launch angle from horizontal /$\ $°", # even out spacing
     min_value=0.0,
-    max_value=89.9,
+    max_value=90.0,
     value=60.0,
     step=0.1,
 )
 
 g = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
 )
 
 u = st.number_input(
-    label="Launch speed (m/s)", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
 )
 
 h = st.number_input(
-    label="Initial height (m)", min_value=0.0, max_value=None, value=2.0
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
 )
 
 datapoints = st.number_input(
@@ -60,36 +60,32 @@ R = ((u**2) / g) * (
     + (cos_theta_R * sqrt((sin_theta_R**2) + ((2 * g * h) / (u**2))))
 )
 
-st.write(f"R = {R}")
-
 x_a_R = ((u**2) / g) * sin_theta_R * cos_theta_R
 
 y_a_R = h + (((u**2) / (2 * g)) * (sin_theta_R**2))
 
 R_max = ((u**2) / g) * sqrt(1 + ((2 * h * g) / (u**2)))
 
-st.markdown(f"R<sub>max</sub> = {R_max}", unsafe_allow_html=True)
-
 theta_R_max_rad = asin(1 / sqrt(2 + ((2 * g * h) / (u**2))))
 
 cos_theta_R_max = cos(theta_R_max_rad)
 tan_theta_R_max = tan(theta_R_max_rad)
 
-st.markdown(
-    f"θ<sub>R<sub>max</sub></sub> = {degrees(theta_R_max_rad)}", unsafe_allow_html=True
-)
-
 T_R = R / (u * cos_theta_R)
 
-st.write(f"Time of flight T: {T_R}s")
-
 T_R_max = R_max / (u * cos_theta_R_max)
-
-st.markdown(f"T<sub>max</sub>: {T_R_max}s", unsafe_allow_html=True)
 
 distance_increment_R = R / (datapoints - 1)
 
 distance_increment_R_max = R_max / (datapoints - 1)
+
+
+st.markdown(r"$\frac{u^2}{g} = " + f"{(u**2 / g):.2f}" + "m$")
+# note: instructions incorrectly state to list $s$ and $s_{\text{max}}$, but they have not instructed to calculate these until task 6.
+st.markdown(r"$(x_{a},y_{a}) = " + f"({x_a_R:.2f}m,{y_a_R:.2f}m)$")
+st.markdown(r"$R = " + f"{R:.2f}" + "m$")
+st.markdown(r"$R_{\text{max}} = " + f"{R_max:.2f}" + "m$")
+
 
 x_pos_R = pd.Series([(distance_increment_R * i) for i in range(datapoints)])
 

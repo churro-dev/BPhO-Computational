@@ -24,23 +24,23 @@ st.title("Task 1")
 st.subheader("Simple model of drag-free projectile motion")
 
 launch_angle = st.slider(
-    label="Launch angle from horizontal (°)",
+    label="Launch angle from horizontal /$\ $°", # even out spacing
     min_value=0.0,
     max_value=90.0,
     value=45.0,
     step=0.1,
 )
 
-g_strength = st.number_input(
-    label="Strength of gravity (m/s²)", min_value=0.1, max_value=None, value=9.81
+g = st.number_input(
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
 )
 
-launch_speed = st.number_input(
-    label="Launch speed (m/s)", min_value=0.0, max_value=None, value=10.0
+u = st.number_input(
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
 )
 
-height = st.number_input(
-    label="Initial height (m)", min_value=0.0, max_value=None, value=0.0
+h = st.number_input(
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
 )
 
 datapoints = st.number_input(
@@ -49,28 +49,21 @@ datapoints = st.number_input(
 
 # Downards direction is negative, input is positive
 # Gravity always acts downards, so negative g_strength
-g_strength *= -1
+g *= -1
 
 # For convenience
 sin_theta = sin(radians(launch_angle))
 cos_theta = cos(radians(launch_angle))
 
 # Initial speed in x & y directions
-u_x = launch_speed * cos_theta
-u_y = launch_speed * sin_theta
+u_x = u * cos_theta
+u_y = u * sin_theta
 
 t_max = -(
-    (u_y + sqrt((u_y**2) - (2 * g_strength * height))) / g_strength
+    (u_y + sqrt((u_y**2) - (2 * g * h))) / g
 )  # Own equation
 
-st.markdown(
-    f"Determined time of flight (t<sub>max</sub>): {t_max} seconds",
-    unsafe_allow_html=True,
-)
-
 time_increment = t_max / (datapoints - 1)
-
-st.write(f"Determined increment of time (Δt): {time_increment} seconds")
 
 t = pd.Series([time_increment * i for i in range(datapoints)])
 
@@ -78,13 +71,17 @@ t = pd.Series([time_increment * i for i in range(datapoints)])
 
 x_pos = pd.Series([round(u_x, 14) * t_i for t_i in t])
 
-y_pos = pd.Series([height + (u_y * t_i) + (0.5 * g_strength * (t_i**2)) for t_i in t])
+y_pos = pd.Series([h + (u_y * t_i) + (0.5 * g * (t_i**2)) for t_i in t])
 
 v_x = pd.Series([u_x for _ in t])
 
-v_y = pd.Series([u_y + (g_strength * t_i) for t_i in t])
+v_y = pd.Series([u_y + (g * t_i) for t_i in t])
 
 v = pd.Series([sqrt((v_x_i**2) + (v_y_i**2)) for v_x_i, v_y_i in zip(v_x, v_y)])
+
+st.markdown(f"Time step$\ \Delta t = {time_increment:.2f}s$")
+st.markdown(f"$v_x = {u_x:.2f}" + r"ms^{-1}$")
+st.markdown(f"Initial$\ v_y = {u_y:.2f}" + r"ms^{-1}$")
 
 pos = pd.DataFrame(
     {
