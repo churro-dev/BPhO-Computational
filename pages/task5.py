@@ -67,8 +67,8 @@ h = st.number_input(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=1, max_value=5000, value=1000
-)
+    label="Number of datapoints", min_value=1, max_value=1000, value=200
+)  # determines how many points to calculate
 
 theta_u_min_rad = atan((Y + sqrt((X**2) + (Y**2))) / X)
 
@@ -224,16 +224,30 @@ pos = pd.DataFrame(
 
 base = alt.Chart(pos)
 
-chart = alt.layer(
-    base.mark_line(color="pink", strokeDash=[5, 5]).encode(
-        x="x_bounding_parabola", y="y_bounding_parabola"
-    ),
-    base.mark_point().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")),
-    base.mark_line(color="grey").encode(x="x_u_min", y="y_u_min"),
-    base.mark_line(color="blue").encode(x="x_highball", y="y_highball"),
-    base.mark_line(color="green").encode(x="x_lowball", y="y_lowball"),
-    base.mark_line(color="red", strokeDash=[5, 5]).encode(x="x_R_max", y="y_R_max"),
-)
+plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
+
+if not plot_points:
+    chart = alt.layer(
+        base.mark_line(color="pink", strokeDash=[5, 5], strokeWidth=3).encode(
+            x="x_bounding_parabola", y="y_bounding_parabola"
+        ),
+        base.mark_line().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")),
+        base.mark_line(color="grey", strokeWidth=3).encode(x="x_u_min", y="y_u_min"),
+        base.mark_line(color="blue", strokeWidth=3).encode(x="x_highball", y="y_highball"),
+        base.mark_line(color="green", strokeWidth=3).encode(x="x_lowball", y="y_lowball"),
+        base.mark_line(color="red", strokeDash=[5, 5], strokeWidth=3).encode(x="x_R_max", y="y_R_max"),
+    )
+else:
+    chart = alt.layer(
+        base.mark_point(color="pink", size=5).encode(
+            x="x_bounding_parabola", y="y_bounding_parabola"
+        ),
+        base.mark_point().encode(x=alt.X("0", title="x / m"), y=alt.Y("0", title="y / m")),
+        base.mark_point(color="grey", size=5).encode(x="x_u_min", y="y_u_min"),
+        base.mark_point(color="blue", size=5).encode(x="x_highball", y="y_highball"),
+        base.mark_point(color="green", size=5).encode(x="x_lowball", y="y_lowball"),
+        base.mark_point(color="red", size=5).encode(x="x_R_max", y="y_R_max"),
+    )
 
 st.altair_chart(chart, use_container_width=True)
 

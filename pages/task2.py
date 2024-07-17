@@ -44,7 +44,7 @@ h = st.number_input(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=1, max_value=5000, value=1000
+    label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
 
 # Downards direction is negative, input is positive
@@ -91,18 +91,27 @@ pos = pd.DataFrame(
     {"t / s": t, "x / m": x_pos, "y / m": y_pos, "x_a / m": x_a, "y_a / m": y_a}
 )
 
-# Plotting the chart
-chart = (
-    alt.Chart(pos)
-    .mark_point()
-    .encode(
-        x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m"), color="t / s"
-    )
-)
+plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
 
-# Adding a separate point
+if not plot_points:
+    chart = (
+        alt.Chart(pos)
+        .mark_line(strokeWidth=4)
+        .encode(
+            x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m")
+        )
+    )
+else:
+    chart = (
+        alt.Chart(pos)
+        .mark_point(size=15)
+        .encode(
+            x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m")
+        )
+    )
+
 point = (
-    alt.Chart(pos).mark_point(color="red", size=100).encode(x="x_a / m", y="y_a / m")
+    alt.Chart(pos).mark_point(color="red", size=50, shape="diamond").encode(x="x_a / m", y="y_a / m")
 )
 
 # Combine the chart and the point

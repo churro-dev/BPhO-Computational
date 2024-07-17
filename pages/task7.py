@@ -35,7 +35,7 @@ u = st.number_input(
 h = 0
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=1, max_value=5000, value=1000
+    label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
 
 angles = st_tags(
@@ -118,6 +118,8 @@ for angle, angle_rad in zip(thetas_deg, thetas_rad):
         angle_points[str(angle).replace(".", "․")+"_min_r"] = sqrt(((u**2)*(t_min**2))-((g)*(t_min**3)*(u)*(sin(angle_rad)))+((1/4)*(g**2)*(t_min**4)))
         angle_points[str(angle).replace(".", "․")+"_max_r"] = sqrt(((u**2)*(t_max**2))-((g)*(t_max**3)*(u)*(sin(angle_rad)))+((1/4)*(g**2)*(t_max**4)))
 
+plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
+
 theme = st_theme()
 if theme != None:
     if theme['base'] == 'light':
@@ -160,28 +162,53 @@ if theme != None:
             y_search_str = f"y_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
             t_search_str = f"t_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
             r_search_str = f"r_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-            if i == 0:
-                chart_one = alt.layer(
-                    base.mark_point(color=color, size=20).encode(
-                        x=alt.X(x_search_str, title="x / m"),
-                        y=alt.Y(y_search_str, title="y / m"),
+            if not plot_points:
+                if i == 0:
+                    chart_one = alt.layer(
+                        base.mark_line(color=color, strokeWidth=5).encode(
+                            x=alt.X(x_search_str, title="x / m"),
+                            y=alt.Y(y_search_str, title="y / m"),
+                        )
                     )
-                )
-                chart_two = alt.layer(
-                    base.mark_point(color=color, size=20).encode(
-                        x=alt.X(t_search_str, title="t / s"),
-                        y=alt.Y(r_search_str, title="range r / m"),
+                    chart_two = alt.layer(
+                        base.mark_line(color=color, strokeWidth=5).encode(
+                            x=alt.X(t_search_str, title="t / s"),
+                            y=alt.Y(r_search_str, title="range  r / m"), # double space is intentional to separate title from units
+                        )
                     )
-                )
+                else:
+                    chart_one += base.mark_line(color=color, strokeWidth=5).encode(
+                        alt.X(x_search_str),
+                        alt.Y(y_search_str),
+                    )
+                    chart_two += base.mark_line(color=color, strokeWidth=5).encode(
+                        x=alt.X(t_search_str),
+                        y=alt.Y(r_search_str),
+                    )
             else:
-                chart_one += base.mark_point(color=color, size=20).encode(
-                    alt.X(x_search_str),
-                    alt.Y(y_search_str),
-                )
-                chart_two += base.mark_point(color=color, size=20).encode(
-                    x=alt.X(t_search_str),
-                    y=alt.Y(r_search_str),
-                )
+                if i == 0:
+                    chart_one = alt.layer(
+                        base.mark_point(color=color, size=30).encode(
+                            x=alt.X(x_search_str, title="x / m"),
+                            y=alt.Y(y_search_str, title="y / m"),
+                        )
+                    )
+                    chart_two = alt.layer(
+                        base.mark_point(color=color, size=30).encode(
+                            x=alt.X(t_search_str, title="t / s"),
+                            y=alt.Y(r_search_str, title="range r / m"),
+                        )
+                    )
+                else:
+                    chart_one += base.mark_point(color=color, size=30).encode(
+                        alt.X(x_search_str),
+                        alt.Y(y_search_str),
+                    )
+                    chart_two += base.mark_point(color=color, size=30).encode(
+                        x=alt.X(t_search_str),
+                        y=alt.Y(r_search_str),
+                    )
+
             if angle >= threshold_deg:
                 angle_point_min_x_search_str = f"{angle}_min_x".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
                 angle_point_min_y_search_str = f"{angle}_min_y".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)

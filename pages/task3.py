@@ -67,8 +67,8 @@ h = st.number_input(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=1, max_value=5000, value=1000
-)
+    label="Number of datapoints", min_value=1, max_value=1000, value=200
+)  # determines how many points to calculate
 
 distance_increment = X / (datapoints - 1)
 
@@ -151,11 +151,20 @@ pos = pd.DataFrame(
 
 base = alt.Chart(pos).encode(x="x / m")
 
-chart = alt.layer(
-    base.mark_line(color="grey").encode(y=alt.Y("y_u_min / m", title="y / m")),
-    base.mark_line(color="blue").encode(y="y_highball / m"),
-    base.mark_line(color="red").encode(y="y_lowball / m"),
-)
+plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
+
+if not plot_points:
+    chart = alt.layer(
+        base.mark_line(color="grey", strokeWidth=3).encode(y=alt.Y("y_u_min / m", title="y / m")),
+        base.mark_line(color="blue", strokeWidth=3).encode(y="y_highball / m"),
+        base.mark_line(color="red", strokeWidth=3).encode(y="y_lowball / m"),
+    )
+else:
+    chart = alt.layer(
+        base.mark_point(color="grey", size=10).encode(y=alt.Y("y_u_min / m", title="y / m")),
+        base.mark_point(color="blue", size=10).encode(y="y_highball / m"),
+        base.mark_point(color="red", size=10).encode(y="y_lowball / m"),
+    )
 
 st.altair_chart(chart, use_container_width=True)
 

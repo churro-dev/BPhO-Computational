@@ -43,7 +43,7 @@ h = st.number_input(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=1, max_value=5000, value=1000
+    label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
 
 # Downards direction is negative, input is positive
@@ -149,19 +149,28 @@ pos = pd.DataFrame(
     }
 )
 
+plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
+
 base = alt.Chart(pos)
 
-chart = alt.layer(
-    base.mark_point(color="blue").encode(
-        x=alt.X("x_R / m", title="x / m"),
-        y=alt.Y("y_R / m", title="y / m"),
-        strokeWidth=("t_R / s"),
-    ),
-    base.mark_point(
-        color="red",
-    ).encode(x="x_R_max / m", y="y_R_max / m", strokeWidth="t_R_max / s"),
-    base.mark_point(color="black", size=200).encode(x="x_a / m", y="y_a / m")
-)
+if not plot_points:
+    chart = alt.layer(
+        base.mark_line(color="blue", strokeWidth=5).encode(
+            x=alt.X("x_R / m", title="x / m"),
+            y=alt.Y("y_R / m", title="y / m"),
+        ),
+        base.mark_line(color="red", strokeWidth=5).encode(x="x_R_max / m", y="y_R_max / m"),
+        base.mark_point(color="black", size=30, shape="diamond").encode(x="x_a / m", y="y_a / m")
+    )
+else:
+    chart = alt.layer(
+        base.mark_point(color="blue", size=10).encode(
+            x=alt.X("x_R / m", title="x / m"),
+            y=alt.Y("y_R / m", title="y / m"),
+        ),
+        base.mark_point(color="red", size=10).encode(x="x_R_max / m", y="y_R_max / m"),
+        base.mark_point(color="black", size=30, shape="diamond").encode(x="x_a / m", y="y_a / m")
+    )
 
 st.altair_chart(chart, use_container_width=True)
 

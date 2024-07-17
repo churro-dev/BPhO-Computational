@@ -44,7 +44,7 @@ height = st.number_input(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=1, max_value=5000, value=1000
+    label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
 
 # Downards direction is negative, input is positive
@@ -88,33 +88,53 @@ v = pd.Series([sqrt((v_x_i**2) + (v_y_i**2)) for v_x_i, v_y_i in zip(v_x, v_y)])
 
 pos = pd.DataFrame(
     {
-        "Time (s)": t,
+        "t / s": t,
         "x / m": x_pos,
         "y / m": y_pos,
-        "X Velocity (m/s)": v_x,
-        "Y Velocity (m/s)": v_y,
-        "Velocity (m/s)": v,
+        "v_x": v_x,
+        "v_y": v_y,
+        "v": v,
     }
 )
 
-chart = (
-    alt.Chart(pos)
-    .mark_point()
-    .encode(
-        x="x / m",
-        y="y / m",
-        color="Time (s)",
-        tooltip=[
-            "Time (s)",
-            "x / m",
-            "y / m",
-            "X Velocity (m/s)",
-            "Y Velocity (m/s)",
-            "Velocity (m/s)",
-        ],
+plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
+
+if not plot_points:
+    chart = (
+        alt.Chart(pos)
+        .mark_line(strokeWidth=4)
+        .encode(
+            x="x / m",
+            y="y / m",
+            tooltip=[
+                "t / s",
+                "x / m",
+                "y / m",
+                "v_x",
+                "v_y",
+                "v",
+            ],
+        )
+        .resolve_scale(x="shared", y="shared")
     )
-    .resolve_scale(x="shared", y="shared")
-)
+else:
+    chart = (
+        alt.Chart(pos)
+        .mark_point()
+        .encode(
+            x="x / m",
+            y="y / m",
+            tooltip=[
+                "t / s",
+                "x / m",
+                "y / m",
+                "v_x",
+                "v_y",
+                "v",
+            ],
+        )
+        .resolve_scale(x="shared", y="shared")
+    )
 
 st.altair_chart(chart, use_container_width=True)
 
