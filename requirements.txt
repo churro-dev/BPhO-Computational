@@ -1,5 +1,5 @@
-streamlit==1.35.0
-st-pages==0.4.5
+streamlit==1.36.0
+st-pages==0.5.0
 pandas==2.2.2
 altair==5.3.0
 streamlit-tags==1.2.8
