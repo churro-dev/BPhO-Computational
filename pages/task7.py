@@ -218,7 +218,7 @@ if theme != None:
                 angle_point_min_r_search_str = f"{angle}_min_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
                 angle_point_max_t_search_str = f"{angle}_max_t".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
                 angle_point_max_r_search_str = f"{angle}_max_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                chart_one += base.mark_point(color="pink" if color!="pink" else "purple", shape="diamond", size=20).encode(
+                chart_one += base.mark_point(color="darkorchid" if color!="darkorchid" else "purple", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_min_x_search_str),
                     y=alt.Y(angle_point_min_y_search_str),
                 )
@@ -226,7 +226,7 @@ if theme != None:
                     x=alt.X(angle_point_max_x_search_str),
                     y=alt.Y(angle_point_max_y_search_str),
                 )
-                chart_two += base.mark_point(color="pink" if color!="pink" else "purple", shape="diamond", size=20).encode(
+                chart_two += base.mark_point(color="darkorchid" if color!="darkorchid" else "purple", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_min_t_search_str),
                     y=alt.Y(angle_point_min_r_search_str),
                 )
