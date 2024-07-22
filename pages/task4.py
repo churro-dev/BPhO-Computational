@@ -1,5 +1,5 @@
 # Imports
-from math import asin, cos, degrees, radians, sin, sqrt, tan
+from math import asin, cos, radians, sin, sqrt, tan
 
 import altair as alt
 import pandas as pd
