@@ -79,7 +79,7 @@ Rs = [((u**2) / g) * ((sin_theta_R * cos_theta_R)+ (cos_theta_R * sqrt((sin_thet
 
 T_R = R / (u * cos_theta_R)
 T_Rs = [R / (u * cos_theta_R) for R, cos_theta_R in zip(Rs, cos_thetas_R)]
-T_Rs_dict = {"t_R_"+(str(theta_deg).replace(".", "․")): T_R for theta_deg, T_R in zip(thetas_deg, T_Rs)}
+T_Rs_dict = {"t_R_"+(str(theta_deg).replace(".", "․") + "°"): T_R for theta_deg, T_R in zip(thetas_deg, T_Rs)}
 
 distance_increment_R = R / (datapoints - 1)
 distance_increment_Rs = [R / (datapoints - 1) for R in Rs]
@@ -99,11 +99,11 @@ y_pos_Rs = [pd.Series(
 y_pos_Rs_dict = {f"y_pos_R_{i} / m": y_pos_R for i, y_pos_R in enumerate(y_pos_Rs)}
 
 rs_pos = [pd.Series([sqrt((x**2)+(y**2)) for x, y in zip(x_pos_R, y_pos_R)]) for x_pos_R, y_pos_R in zip(x_pos_Rs, y_pos_Rs)]
-rs_pos_dict = {"r_"+(str(theta_deg).replace(".", "․")):R_pos for R_pos, theta_deg in zip(rs_pos, thetas_deg)}
+rs_pos_dict = {"r_"+(str(theta_deg).replace(".", "․") + "°"):R_pos for R_pos, theta_deg in zip(rs_pos, thetas_deg)}
 
 t = pd.Series([x_pos_R_i / (u * cos_theta_R) for x_pos_R_i in x_pos_R])
 ts = [pd.Series([x_pos_R_i / (u * cos_theta_R) for x_pos_R_i in x_pos_R]) for x_pos_R, cos_theta_R in zip(x_pos_Rs, cos_thetas_R)]
-ts_dict = {"t_" + (str(theta_deg).replace(".", "․")): t for theta_deg, t in zip(thetas_deg, ts)}
+ts_dict = {"t_" + (str(theta_deg).replace(".", "․") + "°"): t for theta_deg, t in zip(thetas_deg, ts)}
 
 angle_points = {}
 for angle, angle_rad in zip(thetas_deg, thetas_rad):
@@ -111,12 +111,12 @@ for angle, angle_rad in zip(thetas_deg, thetas_rad):
         t_min = ((3*u)/(2*g))*(sin(radians(angle)) - sqrt((sin(radians(angle))**2) - (8/9)))
         t_max = ((3*u)/(2*g))*(sin(radians(angle)) + sqrt((sin(radians(angle))**2) - (8/9)))
         
-        angle_points[(angle_str := str(angle).replace(".", "․")+"_min")+"_x"], angle_points[angle_str+"_y"] = (x:= u*t_min*cos(radians(angle))), (h + (x * tan(radians(angle))) - ((g / (2 * (u**2))) * (1 + (tan(radians(angle))**2)) * (x**2)))
-        angle_points[(angle_str := str(angle).replace(".", "․")+"_max")+"_x"], angle_points[angle_str+"_y"] = (x:= u*t_max*cos(radians(angle))), (h + (x * tan(radians(angle))) - ((g / (2 * (u**2))) * (1 + (tan(radians(angle))**2)) * (x**2)))
-        angle_points[(angle_str := str(angle).replace(".", "․")+"_min")+"_t"] = t_min
-        angle_points[(angle_str := str(angle).replace(".", "․")+"_max")+"_t"] = t_max
-        angle_points[str(angle).replace(".", "․")+"_min_r"] = sqrt(((u**2)*(t_min**2))-((g)*(t_min**3)*(u)*(sin(angle_rad)))+((1/4)*(g**2)*(t_min**4)))
-        angle_points[str(angle).replace(".", "․")+"_max_r"] = sqrt(((u**2)*(t_max**2))-((g)*(t_max**3)*(u)*(sin(angle_rad)))+((1/4)*(g**2)*(t_max**4)))
+        angle_points[(angle_str := str(angle).replace(".", "․") + "°"+"_min")+"_x"], angle_points[angle_str+"_y"] = (x:= u*t_min*cos(radians(angle))), (h + (x * tan(radians(angle))) - ((g / (2 * (u**2))) * (1 + (tan(radians(angle))**2)) * (x**2)))
+        angle_points[(angle_str := str(angle).replace(".", "․") + "°"+"_max")+"_x"], angle_points[angle_str+"_y"] = (x:= u*t_max*cos(radians(angle))), (h + (x * tan(radians(angle))) - ((g / (2 * (u**2))) * (1 + (tan(radians(angle))**2)) * (x**2)))
+        angle_points[(angle_str := str(angle).replace(".", "․") + "°"+"_min")+"_t"] = t_min
+        angle_points[(angle_str := str(angle).replace(".", "․") + "°"+"_max")+"_t"] = t_max
+        angle_points[str(angle).replace(".", "․") + "°"+"_min_r"] = sqrt(((u**2)*(t_min**2))-((g)*(t_min**3)*(u)*(sin(angle_rad)))+((1/4)*(g**2)*(t_min**4)))
+        angle_points[str(angle).replace(".", "․") + "°"+"_max_r"] = sqrt(((u**2)*(t_max**2))-((g)*(t_max**3)*(u)*(sin(angle_rad)))+((1/4)*(g**2)*(t_max**4)))
 
 plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
 
@@ -129,11 +129,11 @@ if theme != None:
        
 
     for i, line in enumerate(list(x_pos_Rs_dict)):
-        new_key = f"x_{str(thetas_deg[i])}".replace(".", "․")
+        new_key = f"x_{str(thetas_deg[i])}".replace(".", "․") + "°"
         x_pos_Rs_dict[new_key] = x_pos_Rs_dict.pop(line)
     
     for i, line in enumerate(list(y_pos_Rs_dict)):
-        new_key = f"y_{str(thetas_deg[i])}".replace(".", "․")
+        new_key = f"y_{str(thetas_deg[i])}".replace(".", "․") + "°"
         y_pos_Rs_dict[new_key] = y_pos_Rs_dict.pop(line)
     
     pos = pd.DataFrame(
@@ -144,7 +144,8 @@ if theme != None:
         **x_pos_Rs_dict,
         **y_pos_Rs_dict,
         **rs_pos_dict,
-        **angle_points
+        **angle_points,
+        "0": 0
         }
     )
 
@@ -158,66 +159,64 @@ if theme != None:
         base = alt.Chart(pos)
 
         for i, color, angle in zip(range(len(x_pos_Rs)), chosen, thetas_deg):
-            x_search_str = f"x_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-            y_search_str = f"y_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-            t_search_str = f"t_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-            r_search_str = f"r_{angle}".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+            x_search_str = f"x_{angle}".replace(".", "․") + "°" # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+            y_search_str = f"y_{angle}".replace(".", "․") + "°" # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+            t_search_str = f"t_{angle}".replace(".", "․") + "°" # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+            r_search_str = f"r_{angle}".replace(".", "․") + "°" # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
             if not plot_points:
                 if i == 0:
                     chart_one = alt.layer(
-                        base.mark_line(color=color, strokeWidth=5).encode(
-                            x=alt.X(x_search_str, title="x / m"),
-                            y=alt.Y(y_search_str, title="y / m"),
+                        base.mark_line(color=color, strokeWidth=0).encode(
+                            x=alt.X("0", title="x / m"),
+                            y=alt.Y("0", title="y / m"),
                         )
                     )
                     chart_two = alt.layer(
-                        base.mark_line(color=color, strokeWidth=5).encode(
-                            x=alt.X(t_search_str, title="t / s"),
-                            y=alt.Y(r_search_str, title="range  r / m"), # double space is intentional to separate title from units
+                        base.mark_line(color=color, strokeWidth=0).encode(
+                            x=alt.X("0", title="t / s"),
+                            y=alt.Y("0", title="range  r / m"), # double space is intentional to separate title from units
                         )
                     )
-                else:
-                    chart_one += base.mark_line(color=color, strokeWidth=5).encode(
-                        alt.X(x_search_str),
-                        alt.Y(y_search_str),
-                    )
-                    chart_two += base.mark_line(color=color, strokeWidth=5).encode(
-                        x=alt.X(t_search_str),
-                        y=alt.Y(r_search_str),
-                    )
+                chart_one += base.mark_line(color=color, strokeWidth=5).encode(
+                    alt.X(x_search_str),
+                    alt.Y(y_search_str),
+                )
+                chart_two += base.mark_line(color=color, strokeWidth=5).encode(
+                    x=alt.X(t_search_str),
+                    y=alt.Y(r_search_str),
+                )
             else:
                 if i == 0:
                     chart_one = alt.layer(
                         base.mark_point(color=color, size=30).encode(
-                            x=alt.X(x_search_str, title="x / m"),
-                            y=alt.Y(y_search_str, title="y / m"),
+                            x=alt.X("0", title="x / m"),
+                            y=alt.Y("0", title="y / m"),
                         )
                     )
                     chart_two = alt.layer(
                         base.mark_point(color=color, size=30).encode(
-                            x=alt.X(t_search_str, title="t / s"),
-                            y=alt.Y(r_search_str, title="range r / m"),
+                            x=alt.X("0", title="t / s"),
+                            y=alt.Y("0", title="range r / m"),
                         )
                     )
-                else:
-                    chart_one += base.mark_point(color=color, size=30).encode(
-                        alt.X(x_search_str),
-                        alt.Y(y_search_str),
-                    )
-                    chart_two += base.mark_point(color=color, size=30).encode(
-                        x=alt.X(t_search_str),
-                        y=alt.Y(r_search_str),
-                    )
+                chart_one += base.mark_point(color=color, size=30).encode(
+                    alt.X(x_search_str),
+                    alt.Y(y_search_str),
+                )
+                chart_two += base.mark_point(color=color, size=30).encode(
+                    x=alt.X(t_search_str),
+                    y=alt.Y(r_search_str),
+                )
 
             if angle >= threshold_deg:
-                angle_point_min_x_search_str = f"{angle}_min_x".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_min_y_search_str = f"{angle}_min_y".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_max_x_search_str = f"{angle}_max_x".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_max_y_search_str = f"{angle}_max_y".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_min_t_search_str = f"{angle}_min_t".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_min_r_search_str = f"{angle}_min_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_max_t_search_str = f"{angle}_max_t".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
-                angle_point_max_r_search_str = f"{angle}_max_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_min_x_search_str = f"{angle}°_min_x".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_min_y_search_str = f"{angle}°_min_y".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_max_x_search_str = f"{angle}°_max_x".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_max_y_search_str = f"{angle}°_max_y".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_min_t_search_str = f"{angle}°_min_t".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_min_r_search_str = f"{angle}°_min_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_max_t_search_str = f"{angle}°_max_t".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
+                angle_point_max_r_search_str = f"{angle}°_max_r".replace(".", "․") # SECOND CHARACTER IS (U+2024) RATHER THAN (U+002E)
                 chart_one += base.mark_point(color="darkorchid" if color!="darkorchid" else "purple", shape="diamond", size=20).encode(
                     x=alt.X(angle_point_min_x_search_str),
                     y=alt.Y(angle_point_min_y_search_str),
