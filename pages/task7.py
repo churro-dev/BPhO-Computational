@@ -55,7 +55,7 @@ thetas_rad = [radians(theta_deg) for theta_deg in thetas_deg]
 
 # Downards direction is negative, input is positive
 # Gravity always acts downards, so negative g_strength to get acceleration
-acceleration = -g
+a = -g
 
 R_max = ((u**2) / g) * sqrt(1 + ((2 * h * g) / (u**2)))
 

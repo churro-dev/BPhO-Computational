@@ -49,7 +49,7 @@ datapoints = st.number_input(
 
 # Downards direction is negative, input is positive
 # Gravity always acts downards, so negative g_strength to get acceleration
-acceleration = -g
+a = -g
 
 # For convenience
 sin_theta = sin(radians(theta))
