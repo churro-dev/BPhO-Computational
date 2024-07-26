@@ -31,6 +31,7 @@ theta_deg = st.slider(
     step=0.1,
 )
 theta_rad = radians(theta_deg)
+initial_theta_rad = theta_rad
 
 g = st.number_input(
     label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
@@ -74,8 +75,9 @@ y_poses = []
 T_max = 0
 R_max = 0
 
+times = []
 print("\n"*15)
-for bounce_count in range(N):
+for bounce_count in range(N+1):
     print(f"Current position: {x, y}")
     # Calculations
     sin_theta = sin(theta_rad)
@@ -85,16 +87,18 @@ for bounce_count in range(N):
     if bounce_count == 0:
         u_x = u * cos_theta
         u_y = u * sin_theta
-    R = (((u**2) / g) * (
+    R = ((u**2) / g) * (
         (sin_theta * cos_theta)
         + (cos_theta * sqrt((sin_theta**2) + ((2 * g * y) / (u**2))))
-    ))
+    )
     dx = R / (datapoints - 1)
     relative_x_pos = [(dx * i) for i in range(datapoints)]
     x_pos = [(x + (dx * i)) for i in range(datapoints)]
     print(f"First x_pos calculated: {x_pos[0]}")
     R_max += R
-    T_max += R / (u * cos_theta)
+    T = R / (u_x)
+    times.append(T)
+    T_max += T
     y_pos = [
         round(y
         + ((x_pos_i * tan_theta)
@@ -104,26 +108,28 @@ for bounce_count in range(N):
     # Prepare for next cycle
     v_x = u_x
     v_y = sqrt((u_y**2) + (2 * g * y))
-    theta_rad = atan(v_y / v_x)
+    u_x = v_x
+    u_y = v_y * e
+    u = sqrt((u_x**2) + (u_y**2))
+    theta_rad = atan(u_y / u_x)
     theta_deg = degrees(theta_rad)
     print(f"Landing angle: {theta_deg:.2f} degrees")
     x_poses += (x_pos)
     y_poses += (y_pos)
     x = x_pos[-1]
     y = y_pos[-1]
-    u_x = v_x
-    u_y = v_y * e
-    u = sqrt((u_x**2) + (u_y**2))
     print(f"Starting point: {x_pos[0], y_pos[0]}")
     print(f"Ending point: {x_pos[-1], y_pos[-1]}")
 
 
-st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{theta_rad:.2f}\ " + r"\text{rad}$")
+st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{initial_theta_rad:.2f}\ " + r"\text{rad}$")
 st.markdown(r"Total range $\ R_{\text{max}}" + f" = {R_max:.2f}m$")
 st.markdown(r"Total time $\ T_{\text{max}}" + f" = {T_max:.2f}s$")
 
 pos_df = pd.DataFrame(
-    {"x / m": pd.Series(x_poses), "y / m": pd.Series(y_poses)}
+    {"x / m": pd.Series(x_poses),
+     "y / m": pd.Series(y_poses)
+    }
 )
 
 plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
