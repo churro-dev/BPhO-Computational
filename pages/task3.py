@@ -32,18 +32,16 @@ g = st.number_input(
     label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
-u_min = sqrt(g) * sqrt(Y + sqrt((X**2) + (Y**2)))
+u_min = sqrt(g) * sqrt(Y + sqrt((X**2) + (Y**2)))+0.0000000000001 # accounts for accuracy limitation causing domain error in theta_u_min_rad calculation
 
 launch_speed_container = st.container(border=True)
 
 with launch_speed_container:
     st.markdown(f"Minimum launch speed to reach target$\ u = {u_min:.2f} " + r"ms^{-1}$")
 
-    apply_u = st.button("Apply minimum launch speed")
+    apply_u = st.toggle("Apply minimum launch speed")
 
-    unapply_u = st.button("Unapply minimum launch speed")
-
-    if apply_u and not unapply_u:
+    if apply_u:
         u = st.number_input(
             label="Launch speed$\ u$ / $ms^{-1}$",
             min_value=u_min,

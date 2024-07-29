@@ -52,7 +52,7 @@ with launch_speed_container:
             min_value=u_min,
             max_value=None,
             value=u_min,
-            format=f"%.{len(str(u_min).split('.')[-1])}f"
+            format=f"%.{len(str(u_min).split('.')[-1])}f",
             disabled=True,
         )
     else:
@@ -61,7 +61,7 @@ with launch_speed_container:
             min_value=u_min,
             max_value=None,
             value=u_min * 1.15,
-            format=f"%.{len(str(u_min * 1.15).split('.')[-1])}f"
+            format=f"%.{len(str(u_min * 1.15).split('.')[-1])}f",
             disabled=False,
         )
 
