@@ -27,28 +27,24 @@ theta_deg = st.slider(
     min_value=0.0,
     max_value=90.0,
     value=60.0,
-    step=0.1,
+    step=0.1
 )
 
 g = st.number_input(
-    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 u = st.number_input(
-    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=(num := 10.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 h = st.number_input(
-    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=(num := 2.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 datapoints = st.number_input(
     label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
-
-# Downards direction is negative, input is positive
-# Gravity always acts downards, so negative g_strength to get acceleration
-a = -g
 
 # For convenience
 sin_theta_R = sin(radians(theta_deg))

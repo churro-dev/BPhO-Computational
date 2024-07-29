@@ -25,11 +25,11 @@ st.title("Task 7")
 st.subheader("Range of projectile vs. time - maxima & minima")
 
 g = st.number_input(
-    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 u = st.number_input(
-    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=(num := 10.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 h = 0
@@ -52,10 +52,6 @@ for angle in angles:
     except ValueError:
         pass
 thetas_rad = [radians(theta_deg) for theta_deg in thetas_deg]
-
-# Downards direction is negative, input is positive
-# Gravity always acts downards, so negative g_strength to get acceleration
-a = -g
 
 R_max = ((u**2) / g) * sqrt(1 + ((2 * h * g) / (u**2)))
 

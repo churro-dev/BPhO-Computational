@@ -24,15 +24,13 @@ st.subheader(
     "Drag-free projectile motion model passing through a fixed position " + r"$\left(X,Y\right)$"
 )
 
-X = st.number_input(label="Target $X$ / $m$", min_value=0.0, max_value=None, value=1000.0) # spacing different here and below to make even
+X = st.number_input(label="Target $X$ / $m$", min_value=0.0, max_value=None, value=(num := 1000.0), format=f"%.{len(str(num).split('.')[-1])}f") # spacing different here and below to make even
 
-Y = st.number_input(label="Target$\ Y$ / $m$", min_value=0.0, max_value=None, value=300.0) # spacing different here and above to make even
+Y = st.number_input(label="Target$\ Y$ / $m$", min_value=0.0, max_value=None, value=(num := 300.0), format=f"%.{len(str(num).split('.')[-1])}f") # spacing different here and above to make even
 
 g = st.number_input(
-    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
 )
-
-a = -g
 
 u_min = sqrt(g) * sqrt(Y + sqrt((X**2) + (Y**2)))
 
@@ -51,6 +49,7 @@ with launch_speed_container:
             min_value=u_min,
             max_value=None,
             value=u_min,
+            format=f"%.{len(str(u_min).split('.')[-1])}f",
             disabled=True,
         )
     else:
@@ -59,6 +58,7 @@ with launch_speed_container:
             min_value=u_min,
             max_value=None,
             value=u_min * 1.15,
+            format=f"%.{len(str(u_min * 1.15).split('.')[-1])}f",
             disabled=False,
         )
 

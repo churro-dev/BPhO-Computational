@@ -28,19 +28,19 @@ launch_angle = st.slider(
     min_value=0.0,
     max_value=90.0,
     value=45.0,
-    step=0.1,
+    step=0.1
 )
 
 g = st.number_input(
-    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 u = st.number_input(
-    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=(num := 10.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 h = st.number_input(
-    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=(num := 2.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 datapoints = st.number_input(

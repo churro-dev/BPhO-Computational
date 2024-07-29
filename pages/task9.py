@@ -28,20 +28,20 @@ theta = st.slider(
     min_value=0.0,
     max_value=90.0,
     value=30.0,
-    step=0.1,
+    step=0.1
 )
 theta_rad = radians(theta)
 
 g = st.number_input(
-    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
+    label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 u = st.number_input(
-    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=20.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=(num := 20.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 h = st.number_input(
-    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=(num := 2.0), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
 container = st.container(border=True)
@@ -49,17 +49,54 @@ with container:
     
     custom = st.toggle(label="Use custom drag coefficient", value=False, help="Turn on to use a custom drag coefficient rather than a preset shape.")
     
-    cD = st.number_input(
-        label="Drag coefficient$\ C_D$", min_value=0.0, max_value=None, value=0.5
+    shape = st.selectbox(
+        label="Shape of projectile",
+        options=["Sphere", "Half-sphere", "Cone", "Cube", "Angled Cube", "Long Cylinder", "Short Cylinder", "Streamlined Body", "Streamlined Half-body"],
+        index=0,
+        disabled=custom
     )
+    
+    drag_convert = {
+        "Sphere": 0.47,
+        "Half-sphere": 0.42,
+        "Cone": 0.50,
+        "Cube": 1.05,
+        "Angled Cube": 0.80,
+        "Long Cylinder": 0.82,
+        "Short Cylinder": 1.15,
+        "Streamlined Body": 0.04,
+        "Streamlined Half-body": 0.09
+    }
+    
+    if custom:
+        default = 0.5
+    else:
+        default = drag_convert[shape]
+    
+    cD = st.number_input(
+        label="Drag coefficient$\ C_D$",
+        min_value=0.0,
+        max_value=None,
+        value=default,
+        format=f"%.{len(str(num).split('.')[-1])}f",
+        disabled=(not custom)
+    )
+
+A = st.number_input(
+    label="Cross-sectional area$\ A$ / $m^2$", min_value=0.0, max_value=None, value=(num := 0.007854), format=f"%.{len(str(num).split('.')[-1])}f"
+)
+
+rho = st.number_input(
+    label="Air density$\ \\rho$ / $kgm^{-3}$", min_value=0.0, max_value=None, value=(num := 1.0), format=f"%.{len(str(num).split('.')[-1])}f"
+)
+
+m = st.number_input(
+    label="Mass$\ m$ / $kg$", min_value=0.0, max_value=None, value=(num := 0.1), format=f"%.{len(str(num).split('.')[-1])}f"
+)
 
 datapoints = st.number_input(
     label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
-
-# Downards direction is negative, input is positive
-# Gravity always acts downards, so negative g_strength to get acceleration
-a = -g
 
 # For convenience
 sin_theta = sin(radians(theta))
