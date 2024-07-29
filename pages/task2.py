@@ -1,6 +1,6 @@
 # Imports
 
-from math import cos, radians, sin, sqrt, tan
+from math import cos, radians, sin, sqrt, tan, pi
 
 import altair as alt
 import pandas as pd
@@ -30,6 +30,7 @@ theta = st.slider(
     value=45.0,
     step=0.1,
 )
+theta_rad = radians(theta)
 
 g = st.number_input(
     label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=9.81
@@ -83,7 +84,11 @@ y_pos = pd.Series(
     ]
 )
 
-st.markdown(r"Launch elevation$\ \theta = " + f"{radians(theta):.2f}\ " + r"\text{rad}$")
+pi_divisor = pi / theta_rad
+if pi_divisor==(const := int(pi_divisor)):
+    st.markdown(r"Initial launch elevation$\ \theta_0 = {\large{\frac{\pi}{" + f"{const}\ " + r"}}}\text{rad}$")
+else:
+    st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{theta_rad:.2f}\ " + r"\text{rad}$")
 st.markdown(f"Range$\ R = {R:.2f}m$")
 st.markdown(f"Apogee$\ x_a = {x_a:.2f}m$")
 st.markdown(f"Apogee$\ y_a = {y_a:.2f}m$")

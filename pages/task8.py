@@ -1,11 +1,12 @@
 # Imports
 
-from math import cos, radians, sin, sqrt, tan, atan, degrees
+from math import cos, radians, sin, sqrt, tan, atan, degrees, pi
 
 import altair as alt
 import pandas as pd
 import streamlit as st
 from st_pages import add_indentation, show_pages_from_config
+import time
 
 # Config page
 PAGE_TITLE = "Task 8"
@@ -38,22 +39,22 @@ g = st.number_input(
 )
 
 u = st.number_input(
-    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=5.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
 )
 
 h = st.number_input(
-    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=10.0
+    label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=12.0
 )
 
 N = st.number_input(
-    label="Number of bounces", min_value=1, max_value=100, value=6
+    label="Number of bounces$\ N$", min_value=1, max_value=100, value=8
 )
 
 e = st.slider(
     label="Coefficient of restitution$\ e$",
     min_value = 0.01,
     max_value = 1.00,
-    value = 0.70,
+    value = 0.75,
     step = 0.01
 )
 
@@ -76,9 +77,7 @@ T_max = 0
 R_max = 0
 
 times = []
-print("\n"*15)
 for bounce_count in range(N+1):
-    print(f"Current position: {x, y}")
     # Calculations
     sin_theta = sin(theta_rad)
     cos_theta = cos(theta_rad)
@@ -87,14 +86,15 @@ for bounce_count in range(N+1):
     if bounce_count == 0:
         u_x = u * cos_theta
         u_y = u * sin_theta
-    R = ((u**2) / g) * (
-        (sin_theta * cos_theta)
-        + (cos_theta * sqrt((sin_theta**2) + ((2 * g * y) / (u**2))))
-    )
+        R = ((u**2) / g) * (
+            (sin_theta * cos_theta)
+            + (cos_theta * sqrt((sin_theta**2) + ((2 * g * y) / (u**2))))
+        )
+    else:
+        R = ((u**2)*sin(2*theta_rad)) / (g)
     dx = R / (datapoints - 1)
     relative_x_pos = [(dx * i) for i in range(datapoints)]
     x_pos = [(x + (dx * i)) for i in range(datapoints)]
-    print(f"First x_pos calculated: {x_pos[0]}")
     R_max += R
     T = R / (u_x)
     times.append(T)
@@ -102,7 +102,7 @@ for bounce_count in range(N+1):
     y_pos = [
         round(y
         + ((x_pos_i * tan_theta)
-        - ((g / (2 * (u**2))) * (1 + (tan_theta**2)) * (x_pos_i**2))), 14)
+        - ((g / (2 * (u**2))) * (1 + (tan_theta**2)) * (x_pos_i**2))), 10)
         for x_pos_i in relative_x_pos
     ]
     # Prepare for next cycle
@@ -113,16 +113,17 @@ for bounce_count in range(N+1):
     u = sqrt((u_x**2) + (u_y**2))
     theta_rad = atan(u_y / u_x)
     theta_deg = degrees(theta_rad)
-    print(f"Landing angle: {theta_deg:.2f} degrees")
     x_poses += (x_pos)
     y_poses += (y_pos)
     x = x_pos[-1]
     y = y_pos[-1]
-    print(f"Starting point: {x_pos[0], y_pos[0]}")
-    print(f"Ending point: {x_pos[-1], y_pos[-1]}")
 
+pi_divisor = pi / initial_theta_rad
+if pi_divisor==(const := int(pi_divisor)):
+    st.markdown(r"Initial launch elevation$\ \theta_0 = {\large{\frac{\pi}{" + f"{const}\ " + r"}}}\text{rad}$")
+else:
+    st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{initial_theta_rad:.2f}\ " + r"\text{rad}$")
 
-st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{initial_theta_rad:.2f}\ " + r"\text{rad}$")
 st.markdown(r"Total range $\ R_{\text{max}}" + f" = {R_max:.2f}m$")
 st.markdown(r"Total time $\ T_{\text{max}}" + f" = {T_max:.2f}s$")
 
@@ -156,3 +157,42 @@ else:
 st.altair_chart(chart, use_container_width=True)
 
 st.subheader("Hover over the line for more info 📝")
+
+animate_button = st.button("Animate trajectory")
+if animate_button:
+    chart = st.empty()
+    time_between_points = dx / u_x
+    formatted = "{:e}".format(time_between_points)
+    pow_ten = int(formatted.split("-")[-1])
+    new_time = time_between_points * (10**pow_ten)
+    slow_constant = round(new_time)
+    if not plot_points:
+        for i in pos_df.index[:(pos_df.index[-1] // (datapoints // slow_constant))]:
+            i += 1
+            i *= (datapoints // slow_constant)
+            i -= 1
+            data_to_be_added = pos_df.iloc[0: i + (datapoints//slow_constant), :]
+
+            x = alt.Chart(data_to_be_added).mark_line(strokeWidth=4).encode(
+                x='x / m', 
+                y='y / m',
+            )
+
+            time.sleep(0.1)
+
+            chart.altair_chart(x, use_container_width=True)
+    else:
+        for i in pos_df.index[:(pos_df.index[-1] // (datapoints // slow_constant))]:
+            i += 1
+            i *= (datapoints // slow_constant)
+            i -= 1
+            data_to_be_added = pos_df.iloc[0: i + (datapoints//slow_constant), :]
+
+            x = alt.Chart(data_to_be_added).mark_circle(size=15).encode(
+                x='x / m', 
+                y='y / m',
+            )
+
+            time.sleep(0.1)
+
+            chart.altair_chart(x, use_container_width=True)
