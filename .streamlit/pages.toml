@@ -55,3 +55,9 @@ path = "pages/task8.py"
 name = "Task 8"
 icon = ":memo:"
 in_section = true
+
+[[pages]]
+path = "pages/task9.py"
+name = "Task 9"
+icon = ":memo:"
+in_section = true

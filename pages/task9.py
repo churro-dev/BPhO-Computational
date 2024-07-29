@@ -8,7 +8,7 @@ import streamlit as st
 from st_pages import add_indentation, show_pages_from_config
 
 # Config page
-PAGE_TITLE = "Task 2"
+PAGE_TITLE = "Task 9"
 PAGE_ICON = ":memo:"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
@@ -20,8 +20,8 @@ show_pages_from_config()
 
 # Main Content
 
-st.title("Task 2")
-st.subheader("Analytic model of drag-free projectile motion")
+st.title("Task 9")
+st.subheader("Numerical model of projectile motion with air resistance")
 
 theta = st.slider(
     label="Launch angle from horizontal /$\ $°", # even out spacing
