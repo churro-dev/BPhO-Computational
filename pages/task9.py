@@ -47,7 +47,7 @@ h = st.number_input(
 container = st.container(border=True)
 with container:
     
-    custom = st.toggle(label="Use custom drag coefficient", value=False, help="Turn on to use a custom drag coefficient rather than a preset shape.")
+    custom = st.toggle(label="Use custom drag coefficient", value=True, help="Turn on to use a custom drag coefficient rather than a preset shape.")
     
     shape = st.selectbox(
         label="Shape of projectile",
@@ -69,7 +69,7 @@ with container:
     }
     
     if custom:
-        default = 0.5
+        default = 0.1
     else:
         default = drag_convert[shape]
     
@@ -94,6 +94,10 @@ m = st.number_input(
     label="Mass$\ m$ / $kg$", min_value=0.0, max_value=None, value=(num := 0.1), format=f"%.{len(str(num).split('.')[-1])}f"
 )
 
+dt = st.number_input(
+    label="Time step$\ dt$ / $s$", min_value=0.0, max_value=None, value=(num := 0.01), format=f"%.{len(str(num).split('.')[-1])}f"
+)
+
 datapoints = st.number_input(
     label="Number of datapoints", min_value=1, max_value=1000, value=200
 )  # determines how many points to calculate
@@ -111,43 +115,97 @@ R = ((u**2) / g) * (
 
 distance_increment = R / (datapoints - 1)
 
-x_pos = pd.Series([(distance_increment * i) for i in range(datapoints)])
+x_dragless_pos = [(distance_increment * i) for i in range(datapoints)]
 
-x_a = ((u**2) / g) * sin_theta * cos_theta
+x_dragless_a = ((u**2) / g) * sin_theta * cos_theta
 
-y_a = h + (((u**2) / (2 * g)) * (sin_theta**2))
+y_dragless_a = h + (((u**2) / (2 * g)) * (sin_theta**2))
 
 T = R / (u * cos_theta)
 
-t = pd.Series([x_pos_i / (u * cos_theta) for x_pos_i in x_pos])
+t_dragless = [x_pos_i / (u * cos_theta) for x_pos_i in x_dragless_pos]
 
-y_pos = pd.Series(
-    [
-        h
-        + (x_pos_i * tan_theta)
-        - ((g / (2 * (u**2))) * (1 + (tan_theta**2)) * (x_pos_i**2))
-        for x_pos_i in x_pos
-    ]
-)
+y_dragless_pos = [
+    h
+    + (x_pos_i * tan_theta)
+    - ((g / (2 * (u**2))) * (1 + (tan_theta**2)) * (x_pos_i**2))
+    for x_pos_i in x_dragless_pos
+]
 
-pi_divisor = pi / theta_rad
-if pi_divisor==(const := int(pi_divisor)):
-    st.markdown(r"Initial launch elevation$\ \theta_0 = {\large{\frac{\pi}{" + f"{const}\ " + r"}}}\text{rad}$")
+
+# Initial conditions
+
+k = (0.5 * cD * rho * A) / m
+
+t_drag = [0]
+x_drag_pos = [0]
+y_drag_pos = [h]
+v_drag = [u]
+v_drag_x = [u * cos_theta]
+v_drag_y = [u * sin_theta]
+
+while True:
+    
+    t = t_drag[-1] + dt
+    t_drag.append(t)
+    
+    a_x = - (v_drag_x[-1] * k * v_drag[-1])
+    a_y = - g - (v_drag_y[-1] * k * v_drag[-1])
+    
+    x = x_drag_pos[-1] + (v_drag_x[-1] * dt) + (0.5 * a_x * (dt**2))
+    x_drag_pos.append(x)
+    
+    y = y_drag_pos[-1] + (v_drag_y[-1] * dt) + (0.5 * a_y * (dt**2))
+    y_drag_pos.append(y)
+    
+    v_x = v_drag_x[-1] + (a_x * dt)
+    v_drag_x.append(v_x)
+    
+    v_y = v_drag_y[-1] + (a_y * dt)
+    v_drag_y.append(v_y)
+    
+    v = sqrt((v_drag_x[-1]**2) + (v_drag_y[-1]**2))
+    v_drag.append(v)
+    
+    if y <= 0:
+        break
+
+if y_drag_pos[-1] < 0:
+    y_drag_pos.pop(-1)
+    x_drag_pos.pop(-1)
+
+y_drag_a = max(y_drag_pos)
+x_drag_a = x_drag_pos[y_drag_pos.index(y_drag_a)]
+
+len_x_dragless_pos = len(x_dragless_pos)
+len_x_drag_pos = len(x_drag_pos)
+
+if len_x_dragless_pos < len_x_drag_pos:
+    diff = len_x_drag_pos - len_x_dragless_pos
+    x_dragless_pos += ([0]*diff)
+    y_dragless_pos += ([h]*diff)
+elif len_x_dragless_pos > len_x_drag_pos:
+    diff = len_x_dragless_pos - len_x_drag_pos
+    x_drag_pos += ([0]*diff)
+    y_drag_pos += ([h]*diff)
 else:
-    st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{theta_rad:.2f}\ " + r"\text{rad}$")
-st.markdown(f"Range$\ R = {R:.2f}m$")
-st.markdown(f"Apogee$\ x_a = {x_a:.2f}m$")
-st.markdown(f"Apogee$\ y_a = {y_a:.2f}m$")
-st.markdown(f"Time of flight$\ T = {T:.2f}s$")
+    pass
+
+format_val = len(str(k).split('.')[-1])
+st.markdown(r"Air resistance factor$\ k = " + f"{round(k, format_val)}$")
 
 pos = pd.DataFrame(
     {
-        "t / s": t,
-        "x / m": x_pos,
-        "y / m": y_pos,
-        "x_a / m": x_a,
-        "y_a / m": y_a,
+        "x_drag-free / m": x_dragless_pos,
+        "y_drag-free / m": y_dragless_pos,
+        "x_drag-free_a / m": x_dragless_a,
+        "y_drag-free_a / m": y_dragless_a,
         "drag-free": "drag-free",
+        
+        "x_drag / m": x_drag_pos,
+        "y_drag / m": y_drag_pos,
+        "x_drag_a / m": x_drag_a,
+        "y_drag_a / m": y_drag_a,
         "with drag": "with drag"
     }
 )
@@ -155,28 +213,51 @@ pos = pd.DataFrame(
 plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
 
 if not plot_points:
-    chart = (
+    chart_dragless = (
         alt.Chart(pos)
         .mark_line(strokeWidth=4)
         .encode(
-            x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m"),
-            tooltip="drag-free"
+            x=alt.X("x_drag-free / m", title="x / m"), y=alt.Y("y_drag-free / m", title="y / m"),
+            tooltip=alt.Tooltip(["x_drag-free / m", "y_drag-free / m", "drag-free"])
+        )
+    )
+    chart_drag = (
+        alt.Chart(pos)
+        .mark_line(strokeWidth=4)
+        .encode(
+            x=alt.X("x_drag / m"), y=alt.Y("y_drag / m"),
+            tooltip=alt.Tooltip(["x_drag / m", "y_drag / m", "with drag"])
         )
     )
 else:
-    chart = (
+    chart_dragless = (
         alt.Chart(pos)
-        .mark_point(size=15)
+        .mark_circle(size=15)
         .encode(
-            x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m")
+            x=alt.X("x_drag-free / m", title="x / m"), y=alt.Y("y_drag-free / m", title="y / m"),
+            tooltip=alt.Tooltip(["x_drag-free / m", "y_drag-free / m", "drag-free"])
+        )
+    )
+    chart_drag = (
+        alt.Chart(pos)
+        .mark_circle(size=15)
+        .encode(
+            x=alt.X("x_drag / m"), y=alt.Y("y_drag / m"),
+            tooltip=alt.Tooltip(["x_drag / m", "y_drag / m", "with drag"])
         )
     )
 
-point = (
-    alt.Chart(pos).mark_point(color="red", size=50, shape="diamond").encode(x="x_a / m", y="y_a / m")
+point_dragless = (
+    alt.Chart(pos)
+    .mark_point(color="red", size=50, shape="diamond").encode(x="x_drag-free_a / m", y="y_drag-free_a / m")
+)
+
+point_drag = (
+    alt.Chart(pos)
+    .mark_point(color="red", size=50, shape="diamond").encode(x="x_drag_a / m", y="y_drag_a / m")
 )
 
 # Combine the chart and the point
-st.altair_chart(chart + point, use_container_width=True)
+st.altair_chart(chart_dragless + chart_drag + point_dragless + point_drag, use_container_width=True)
 
 st.subheader("Hover over the line and apogee for more info 📝")
