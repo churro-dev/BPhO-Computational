@@ -45,11 +45,9 @@ launch_speed_container = st.container(border=True)
 with launch_speed_container:
     st.markdown(f"Minimum launch speed to reach target$\ u = {u_min:.2f} " + r"ms^{-1}$")
 
-    apply_u = st.button("Apply minimum launch speed")
+    apply_u = st.toggle("Apply minimum launch speed")
 
-    unapply_u = st.button("Unapply minimum launch speed")
-
-    if apply_u and not unapply_u:
+    if apply_u:
         u = st.number_input(
             label="Launch speed$\ u$ / $ms^{-1}$",
             min_value=u_min,

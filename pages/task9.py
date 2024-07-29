@@ -27,7 +27,7 @@ theta = st.slider(
     label="Launch angle from horizontal /$\ $°", # even out spacing
     min_value=0.0,
     max_value=90.0,
-    value=45.0,
+    value=30.0,
     step=0.1,
 )
 theta_rad = radians(theta)
@@ -37,12 +37,21 @@ g = st.number_input(
 )
 
 u = st.number_input(
-    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=10.0
+    label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=None, value=20.0
 )
 
 h = st.number_input(
     label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=2.0
 )
+
+container = st.container(border=True)
+with container:
+    
+    custom = st.toggle(label="Use custom drag coefficient", value=False, help="Turn on to use a custom drag coefficient rather than a preset shape.")
+    
+    cD = st.number_input(
+        label="Drag coefficient$\ C_D$", min_value=0.0, max_value=None, value=0.5
+    )
 
 datapoints = st.number_input(
     label="Number of datapoints", min_value=1, max_value=1000, value=200
@@ -95,7 +104,15 @@ st.markdown(f"Apogee$\ y_a = {y_a:.2f}m$")
 st.markdown(f"Time of flight$\ T = {T:.2f}s$")
 
 pos = pd.DataFrame(
-    {"t / s": t, "x / m": x_pos, "y / m": y_pos, "x_a / m": x_a, "y_a / m": y_a}
+    {
+        "t / s": t,
+        "x / m": x_pos,
+        "y / m": y_pos,
+        "x_a / m": x_a,
+        "y_a / m": y_a,
+        "drag-free": "drag-free",
+        "with drag": "with drag"
+    }
 )
 
 plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
@@ -105,7 +122,8 @@ if not plot_points:
         alt.Chart(pos)
         .mark_line(strokeWidth=4)
         .encode(
-            x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m")
+            x=alt.X("x / m", title="x / m"), y=alt.Y("y / m", title="y / m"),
+            tooltip="drag-free"
         )
     )
 else:
