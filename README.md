@@ -25,7 +25,7 @@ Displays our work in a succinct way for the BPhO Computational Challenge 2024.
 
 `Python >= 3.8`
 
-Install Python version equal to or higher than 3.8 from https://www.python.org/downloads/ ~~or from the Microsoft Store~~ _We do not recommend using MS Store version_
+Install Python version equal to or higher than 3.8 from https://www.python.org/downloads/
 
 All library requirements are listed in ***requirements.txt***
 
