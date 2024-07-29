@@ -8,7 +8,7 @@ from st_pages import add_indentation, show_pages_from_config
 
 # Config page
 PAGE_TITLE = "Task 3"
-PAGE_ICON = "📝"
+PAGE_ICON = ":memo:"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )

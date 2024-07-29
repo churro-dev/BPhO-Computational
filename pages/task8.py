@@ -10,7 +10,7 @@ import time
 
 # Config page
 PAGE_TITLE = "Task 8"
-PAGE_ICON = "📝"
+PAGE_ICON = ":memo:"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
 )

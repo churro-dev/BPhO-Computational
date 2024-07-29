@@ -1,57 +1,57 @@
 [[pages]]
 path = "streamlit_app.py"
 name = "Home"
-icon = "🏡"
+icon = ":house:"
 
 [[pages]]
 name = "Tasks"
-icon = "🖥️"
+icon = ":computer:"
 is_section = true
 
 [[pages]]
 path = "pages/task1.py"
 name = "Task 1"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task2.py"
 name = "Task 2"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task3.py"
 name = "Task 3"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task4.py"
 name = "Task 4"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task5.py"
 name = "Task 5"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task6.py"
 name = "Task 6"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task7.py"
 name = "Task 7"
-icon = "📝"
+icon = ":memo:"
 in_section = true
 
 [[pages]]
 path = "pages/task8.py"
 name = "Task 8"
-icon = "📝"
+icon = ":memo:"
 in_section = true
