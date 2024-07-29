@@ -6,9 +6,10 @@ Displays our work in a succinct way for the BPhO Computational Challenge 2024.
 
 ### Quickstart
 1. Install Python from https://www.python.org/downloads
-2. Ensure Git is installed: https://git-scm.com
-3. Open a CMD window or other terminal
-4. Run the following commands
+      - do NOT use the Microsoft Store version
+3. Ensure Git is installed: https://git-scm.com
+4. Open a CMD window or other terminal
+5. Run the following commands
    
     ```git clone https://github.com/churro-dev/BPhO-Computational.git```
 
