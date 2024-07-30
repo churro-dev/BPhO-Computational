@@ -65,5 +65,5 @@ in_section = true
 [[pages]]
 path = "pages/extension_globe.py"
 name = "Extension Globe"
-icon = ":earth:"
+icon = ":earth_americas:"
 in_section = true

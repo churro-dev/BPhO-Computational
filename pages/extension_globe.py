@@ -6,9 +6,8 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 from st_pages import add_indentation, show_pages_from_config
-import pyvista
-import stpyvista
-import geovista
+import pyvista as pv
+import stpyvista as stpv
 
 # Config page
 PAGE_TITLE = "Global Projectile Motion"
@@ -23,3 +22,4 @@ show_pages_from_config()
 
 # Main Content
 
+st.title("Global Projectile Motion")
