@@ -61,3 +61,9 @@ path = "pages/task9.py"
 name = "Task 9"
 icon = ":memo:"
 in_section = true
+
+[[pages]]
+path = "pages/extension_globe.py"
+name = "Extension Globe"
+icon = ":earth:"
+in_section = true
