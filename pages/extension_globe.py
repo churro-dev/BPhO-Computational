@@ -28,7 +28,5 @@ pl = pv.Plotter()
 pl.add_mesh(dataset, texture=texture)
 
 pl.camera_position = 'iso'
-pl.camera_focal_point = (0, 0, 0)
-pl.camera_view_up = (0, 1, 0)
 
 stpyvista(pl)
