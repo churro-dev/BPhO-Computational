@@ -3,5 +3,5 @@ st-pages==0.5.0
 pandas==2.2.2
 altair==5.3.0
 streamlit-tags==1.2.8
-pyvista==0..44.1
-stpyvisa==0.0.19
+pyvista==0.44.1
+stpyvista==0.0.19
