@@ -7,7 +7,7 @@ from st_pages import show_pages_from_config, add_indentation
 
 
 # Config page
-PAGE_TITLE = "AG + AJ // BPhO"
+PAGE_TITLE = "BPhO CC 2024"
 PAGE_ICON = "🖥️"
 st.set_page_config(
     PAGE_TITLE, PAGE_ICON, layout="wide", initial_sidebar_state="expanded"
