@@ -24,6 +24,7 @@ show_pages_from_config()
 st.title("Task 8")
 st.subheader("Bouncing projectile trajectory")
 
+# Inputs
 theta_deg = st.slider(
     label="Launch angle from horizontal /$\ $°", # even out spacing
     min_value=0.0,
@@ -62,76 +63,79 @@ datapoints = st.number_input(
     label="Number of datapoints per bounce", min_value=2, max_value=1000, value=100
 )  # determines how many points to calculate
 
-global x, y, u_x, u_y, R, T_max, R_max, x_poses, y_poses
-x = 0
-y = h
+global x, y, u_x, u_y, R, T_max, R_max, x_poses, y_poses # idk why I even wrote this
+x = 0 # initial x coordinate
+y = h # Initial y coordinate
 
-x_poses = []
-y_poses = []
+x_poses = [] # list to store x coordinates
+y_poses = [] # list to store y coordinates
 
-T_max = 0
-R_max = 0
+T_max = 0 # total time of flight
+R_max = 0 # total range of projectile
 
-times = []
-for bounce_count in range(N+1):
+times = [] # time per bounce
+for bounce_count in range(N+1): # for each bounce:
     # Calculations
     sin_theta = sin(theta_rad)
     cos_theta = cos(theta_rad)
     tan_theta = tan(theta_rad)
     # Current cycle
-    if bounce_count == 0:
+    if bounce_count == 0: # set initial conditions for first trajectory based on inputs
         u_x = u * cos_theta
         u_y = u * sin_theta
         R = ((u**2) / g) * (
             (sin_theta * cos_theta)
             + (cos_theta * sqrt((sin_theta**2) + ((2 * g * y) / (u**2))))
-        )
+        ) # this equation is dependent on launch height, so it is more complex than below
     else:
-        R = ((u**2)*sin(2*theta_rad)) / (g)
-    dx = R / (datapoints - 1)
-    relative_x_pos = [(dx * i) for i in range(datapoints)]
-    x_pos = [(x + (dx * i)) for i in range(datapoints)]
-    R_max += R
-    T = R / (u_x)
-    times.append(T)
-    T_max += T
+        R = ((u**2)*sin(2*theta_rad)) / (g) # all bounces start from y=0, so this simpler equation is used for range
+    dx = R / (datapoints - 1) # timestep
+    relative_x_pos = [(dx * i) for i in range(datapoints)] # all x positions for this bounce relative to start of bounce
+    x_pos = [(x + (dx * i)) for i in range(datapoints)] # all x positions (absolute: from 0)
+    R_max += R # add range of this bounce to total range
+    T = R / (u_x) # time of flight for this bounce
+    times.append(T) # add time of flight to list
+    T_max += T # add time of flight to total time
     y_pos = [
         round(y
         + ((x_pos_i * tan_theta)
         - ((g / (2 * (u**2))) * (1 + (tan_theta**2)) * (x_pos_i**2))), 10)
         for x_pos_i in relative_x_pos
-    ]
+    ] # y positions (absolute: from 0) calculated from x positions # round to 10 decimal places so that small negative values do to computer maths don't occur
     # Prepare for next cycle
-    v_x = u_x
-    v_y = sqrt((u_y**2) + (2 * g * y))
-    u_x = v_x
-    u_y = v_y * e
-    u = sqrt((u_x**2) + (u_y**2))
-    theta_rad = atan(u_y / u_x)
+    v_x = u_x # x velocity remains constant
+    v_y = sqrt((u_y**2) + (2 * g * y)) # y velocity at end of bounce
+    u_x = v_x # x velocity remains constant
+    u_y = v_y * e # initial y velocity for next bounce
+    u = sqrt((u_x**2) + (u_y**2)) # initial velocity for next bounce
+    theta_rad = atan(u_y / u_x) # angle at which projectile is launched for next bounce
     theta_deg = degrees(theta_rad)
-    x_poses += (x_pos)
-    y_poses += (y_pos)
-    x = x_pos[-1]
-    y = y_pos[-1]
+    x_poses += (x_pos) # add x position to list
+    y_poses += (y_pos) # add y position to list
+    x = x_pos[-1] # set initial x coordinate for next bounce
+    y = y_pos[-1] # set initial y coordinate for next bounce
 
+# thiss whole section checks if the angle is some easy fraction of pi, and if it is, it displays it as a fraction, otherwise as a decimal
 pi_divisor = pi / initial_theta_rad
 if pi_divisor==(const := int(pi_divisor)):
     st.markdown(r"Initial launch elevation$\ \theta_0 = {\large{\frac{\pi}{" + f"{const}\ " + r"}}}\text{rad}$")
 else:
     st.markdown(r"Initial launch elevation$\ \theta_0 = " + f"{initial_theta_rad:.2f}\ " + r"\text{rad}$")
-
+# more displaying info
 st.markdown(r"Total range $\ R_{\text{max}}" + f" = {R_max:.2f}m$")
 st.markdown(r"Total time $\ T_{\text{max}}" + f" = {T_max:.2f}s$")
 
+# creating position dataframe
 pos_df = pd.DataFrame(
     {"x / m": pd.Series(x_poses),
      "y / m": pd.Series(y_poses)
     }
 )
 
+# option to plot unconnected points instead of connected lines between points
 plot_points = st.toggle(label="Plot points instead of line?", value=False, help="If turned on, the connected lines will instead not be connected, and you can more clearly see the individually plotted points.")
 
-if not plot_points:
+if not plot_points: # if plotting a line
     chart = (
         alt.Chart(pos_df)
         .mark_line(strokeWidth=4)
@@ -140,7 +144,7 @@ if not plot_points:
             y=alt.Y("y / m", title="y / m")
         )
     )
-else:
+else: # if plotting points
     chart = (
         alt.Chart(pos_df)
         .mark_point(size=15)
@@ -150,19 +154,23 @@ else:
         )
     )
 
+# display chart
 st.altair_chart(chart, use_container_width=True)
 
 st.subheader("Hover over the line for more info 📝")
 
-animate_button = st.button("Animate trajectory")
-if animate_button:
-    chart = st.empty()
-    time_between_points = dx / u_x
+# Trajectory animation
+animate_button = st.button("Animate trajectory") # button to animate trajectory
+if animate_button: # if button is pressed
+    chart = st.empty() # initialise empty chart
+    time_between_points = dx / u_x # time between each point
+    # start of calculations to make all the animations take a resonable amount of time no matter the number of datapoints
     formatted = "{:e}".format(time_between_points)
     pow_ten = int(formatted.split("-")[-1])
     new_time = time_between_points * (10**pow_ten)
     slow_constant = round(new_time)
-    if not plot_points:
+    # end of those calculations
+    if not plot_points: # if plotting line
         for i in pos_df.index[:(pos_df.index[-1] // (datapoints // slow_constant))]:
             i += 1
             i *= (datapoints // slow_constant)
@@ -177,7 +185,7 @@ if animate_button:
             time.sleep(0.1)
 
             chart.altair_chart(x, use_container_width=True)
-    else:
+    else: # if plotting points
         for i in pos_df.index[:(pos_df.index[-1] // (datapoints // slow_constant))]:
             i += 1
             i *= (datapoints // slow_constant)
