@@ -60,7 +60,7 @@ e = st.slider(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints per bounce", min_value=2, max_value=1000, value=100
+    label="Number of datapoints per bounce", min_value=2, max_value=1000, value=25
 )  # determines how many points to calculate
 
 # global x, y, u_x, u_y, R, T_max, R_max, x_poses, y_poses # idk why I even wrote this
