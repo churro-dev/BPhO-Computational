@@ -6,3 +6,4 @@ streamlit-tags==1.2.8
 pyvista==0.44.1
 stpyvista==0.0.19
 numpy==1.26.4
+streamlit_theme==0.58.0
