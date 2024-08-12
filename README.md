@@ -1,4 +1,4 @@
-# AG + AJ 2024 BPhO Computational Challenge Entry
+# 2024 BPhO Computational Challenge Entry
 
 ## Purpose 🥇
 
