@@ -154,14 +154,7 @@ pl.add_mesh(sphere_0, color='red', opacity=0.5)
 # equations from https://en.wikipedia.org/wiki/Projectile_motion
 
 # angle input here - optimal trajectory angle is calculated and set as the default value
-optimal_angle = (0.5) * acos((v_tilde**2) / (2 - (v_tilde**2)))
-theta_deg = st.slider(
-    label="Launch angle from horizontal /$\ $°", # even out spacing
-    min_value=0.0,
-    max_value=90.0,
-    value=float(optimal_angle),
-    step=0.1
-)
+theta_deg = (0.5) * acos((v_tilde**2) / (2 - (v_tilde**2)))
 theta_rad = radians(theta_deg)
 
 # 2d projectile motion initial state calculations - the names expain what's being calculated
