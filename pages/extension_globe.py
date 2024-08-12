@@ -1,7 +1,4 @@
-# Imports / page configuration
-
 from math import cos, radians, sin, acos, atan2, asin
-
 import altair as alt
 import numpy as np
 import pandas as pd
@@ -10,6 +7,10 @@ from st_pages import add_indentation, show_pages_from_config
 from pyvista.examples import load_globe, load_globe_texture
 import pyvista as pv
 from stpyvista import stpyvista
+
+# Imports / page configuration
+
+
 
 # Config page
 PAGE_TITLE = "Global Projectile Motion"
@@ -160,19 +161,24 @@ theta_rad = radians(theta_deg)
 # 2d projectile motion initial state calculations - the names expain what's being calculated
 d = ((((v)**2) * sin(2 * theta_rad)) / g) / np.sqrt(1 - ((2-((v_tilde)**2)) * (v_tilde**2) * (cos(theta_rad)**2)))
 print(f"Distance: {d}")
+print("Line 1")
 t_max = (((2*v) * sin(theta_rad)) / g) * (1 / (2 - (v_tilde**2))) * (1 + ((1 / (np.sqrt(2-(v_tilde**2))*v_tilde*sin(theta_rad))) * np.arcsin((np.sqrt(2-(v_tilde**2))*v_tilde*sin(theta_rad))/np.sqrt(1-((2-(v_tilde**2))*(v_tilde**2)*(cos(theta_rad)**2))))))
 print(f"Time of flight: {t_max}")
+print("Line 2")
 
 # Interpolation and graphing
 
 Ad = d / R # angular distance
-
+print("Line 3")
 lat_n_rad =  asin(sin(lat_0_rad) * cos(Ad)  + cos(lat_0_rad) * sin(Ad) * cos(bearing_rad))
+print("Line 4")
 lon_n_rad = lon_0_rad + atan2(sin(bearing_rad) * sin(Ad) * cos(lat_0_rad), cos(Ad) - sin(lat_0_rad) * sin(lat_n_rad))
+print("Line 5")
 
 x_n = R * cos(lat_n_rad) * cos(lon_n_rad)
 y_n = R * cos(lat_n_rad) * sin(lon_n_rad)
 z_n = R * sin(lat_n_rad)
+print("Line 6")
 
 def slerp_unit_vectors(p0, p1, t):
     
@@ -182,7 +188,7 @@ def slerp_unit_vectors(p0, p1, t):
     s1 = sin(t * omega)
     
     return (p0 * s0 + p1 * s1) / d
-
+print("Line 7")
 dt = t_max / (datapoints - 1)
 
 for i in range(datapoints + 1):
@@ -191,13 +197,14 @@ for i in range(datapoints + 1):
         point = slerp_unit_vectors(np.array([x_0, y_0, z_0]), np.array([x_n, y_n, z_n]), t)
         sphere = pv.Sphere(radius = 100000000, center = (point[0]*1000, point[1]*1000, point[2]*1000), theta_resolution=10, phi_resolution=10)
         pl.add_mesh(sphere, color='orange', opacity=0.5)
-
+print("Line 8")
 # Display the plot
 
 ## > Locally (on machine):
-### pl.show_axes()
-### pl.show()
-### pl.close()
+pl.show_axes()
+pl.show()
+pl.close()
 
 ## > On website:
-stpyvista(pl, use_container_width=True)
+# stpyvista(pl)
+print("Line 9")
