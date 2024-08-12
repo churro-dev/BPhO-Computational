@@ -140,7 +140,7 @@ z_0 = R * sin(lat_0_rad)
 
 st.write(f"Position: ({x_0}, {y_0}, {z_0})")
 
-# Plottinga  sphere at the staring coordinatets - *1000s are required for some reason, I guess the plotter uses mm or something for their coordinates
+# Plotting a sphere at the starting coordinates: *1000s are required for some reason, I guess the plotter uses mm or something for their coordinates
 sphere_0 = pv.Sphere(radius = 100000000, center = (x_0*1000, y_0*1000, z_0*1000), theta_resolution=10, phi_resolution=10)
 pl.add_mesh(sphere_0, color='red', opacity=0.5)
 
