@@ -50,6 +50,7 @@ bearing = st.slider(
     value=45.0,
     step=0.1
 )
+bearing_rad = radians(bearing)
 
 g = st.number_input(
     label="Strength of gravity$\ g$ / $ms^{-2}$", min_value=0.1, max_value=None, value=(num := 9.81), format=f"%.{len(str(num).split('.')[-1])}f"
@@ -120,7 +121,7 @@ m = st.number_input(
 )
 
 datapoints = st.number_input(
-    label="Number of datapoints", min_value=2, max_value=5000, value=(num := 100), step=1, format="%d"
+    label="Number of datapoints", min_value=2, max_value=5000, value=(num := 20), step=1, format="%d"
 )
 
 ## End of inputs
@@ -173,8 +174,8 @@ print(f"Time of flight: {t_max}")
 
 Ad = d / R # angular distance
 
-lat_n_rad =  asin(sin(lat_0_rad) * cos(Ad)  + cos(lat_0_rad) * sin(Ad) * cos(theta_rad))
-lon_n_rad = lon_0_rad + atan2(sin(theta_rad) * sin(Ad) * cos(lat_0_rad), cos(Ad) - sin(lat_0_rad) * sin(lat_n_rad))
+lat_n_rad =  asin(sin(lat_0_rad) * cos(Ad)  + cos(lat_0_rad) * sin(Ad) * cos(bearing_rad))
+lon_n_rad = lon_0_rad + atan2(sin(bearing_rad) * sin(Ad) * cos(lat_0_rad), cos(Ad) - sin(lat_0_rad) * sin(lat_n_rad))
 
 x_n = R * cos(lat_n_rad) * cos(lon_n_rad)
 y_n = R * cos(lat_n_rad) * sin(lon_n_rad)
