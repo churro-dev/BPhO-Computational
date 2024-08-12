@@ -1,6 +1,6 @@
 # Imports / page configuration
 
-from math import cos, radians, sin, atan, degrees, sqrt, acos
+from math import cos, radians, sin, acos, atan2, asin
 
 import altair as alt
 import numpy as np
@@ -61,8 +61,8 @@ cosmic_velocity = np.sqrt(R * g)
 u = st.number_input(
     label="Launch speed$\ u$ / $ms^{-1}$", min_value=0.1, max_value=float(cosmic_velocity), value=(num := cosmic_velocity/2), format=f"%.{len(str(num).split('.')[-1])}f"
 )
-twod_v = u
-twod_v_tilde = twod_v / np.sqrt(R * g)
+v = u
+v_tilde = v / np.sqrt(R * g)
 
 h = st.number_input(
     label="Initial height$\ h$ / $m$", min_value=0.0, max_value=None, value=(num := 2.0), format=f"%.{len(str(num).split('.')[-1])}f"
@@ -153,7 +153,7 @@ pl.add_mesh(sphere_0, color='red', opacity=0.5)
 # equations from https://en.wikipedia.org/wiki/Projectile_motion
 
 # angle input here - optimal trajectory angle is calculated and set as the default value
-optimal_angle = (0.5) * acos((twod_v_tilde**2) / (2 - (twod_v_tilde**2)))
+optimal_angle = (0.5) * acos((v_tilde**2) / (2 - (v_tilde**2)))
 theta_deg = st.slider(
     label="Launch angle from horizontal /$\ $°", # even out spacing
     min_value=0.0,
@@ -164,135 +164,46 @@ theta_deg = st.slider(
 theta_rad = radians(theta_deg)
 
 # 2d projectile motion initial state calculations - the names expain what's being calculated
-twod_v_x = u * cos(radians(theta_deg))
-twod_v_y = u * sin(radians(theta_deg))
-print(f"Velocity: {u}, Second cosmic velocity: {cosmic_velocity}")
-d = ((((twod_v)**2) * sin(2 * theta_rad)) / g) / np.sqrt(1 - ((2-((twod_v_tilde)**2)) * (twod_v_tilde**2) * (cos(theta_rad)**2)))
+d = ((((v)**2) * sin(2 * theta_rad)) / g) / np.sqrt(1 - ((2-((v_tilde)**2)) * (v_tilde**2) * (cos(theta_rad)**2)))
 print(f"Distance: {d}")
-twod_t_max = (((2*twod_v) * sin(theta_rad)) / g) * (1 / (2 - (twod_v_tilde**2))) * (1 + ((1 / (np.sqrt(2-(twod_v_tilde**2))*twod_v_tilde*sin(theta_rad))) * np.arcsin((np.sqrt(2-(twod_v_tilde**2))*twod_v_tilde*sin(theta_rad))/np.sqrt(1-((2-(twod_v_tilde**2))*(twod_v_tilde**2)*(cos(theta_rad)**2))))))
-print(f"Time of flight: {twod_t_max}")
+t_max = (((2*v) * sin(theta_rad)) / g) * (1 / (2 - (v_tilde**2))) * (1 + ((1 / (np.sqrt(2-(v_tilde**2))*v_tilde*sin(theta_rad))) * np.arcsin((np.sqrt(2-(v_tilde**2))*v_tilde*sin(theta_rad))/np.sqrt(1-((2-(v_tilde**2))*(v_tilde**2)*(cos(theta_rad)**2))))))
+print(f"Time of flight: {t_max}")
 
-# calculating time step
-twod_dt = twod_t_max / datapoints
-t = 0.0
+# Interpolation and graphing
 
-# More initial 2d conditions
-twod_t = [0]
-twod_x = [0]
-twod_y = [R]
-twod_v = [u]
-twod_vx = [u * cos(theta_rad)]
-twod_vy = [u * sin(theta_rad)]
-twod_ax = 0
-twod_ay = -g
+Ad = d / R # angular distance
 
-k = (0.5 * cD * rho * A) / m
+lat_n_rad =  asin(sin(lat_0_rad) * cos(Ad)  + cos(lat_0_rad) * sin(Ad) * cos(theta_rad))
+lon_n_rad = lon_0_rad + atan2(sin(theta_rad) * sin(Ad) * cos(lat_0_rad), cos(Ad) - sin(lat_0_rad) * sin(lat_n_rad))
 
-# Loop for 2d projectile motion # NOT USING DRAG YET # TODO
-for datapoint in range(datapoints):
-    t = twod_t[-1] + twod_dt
-    twod_t.append(t)
+x_n = R * cos(lat_n_rad) * cos(lon_n_rad)
+y_n = R * cos(lat_n_rad) * sin(lon_n_rad)
+z_n = R * sin(lat_n_rad)
+
+def slerp_unit_vectors(p0, p1, t):
     
-    twod_g_theta_rad = atan(twod_x[-1] / twod_y[-1]) # calculates angle at which gravity should act on projectile - this changes as the projectile travels around the globe.
-    twod_ax = (- (g * sin(twod_g_theta_rad)))# - (twod_vx[-1] * k * twod_v[-1]) # calculations to subtract velocity based on drag is commented out because it is acting weird idk why
-    twod_ay = (- (g * cos(twod_g_theta_rad)))# - (twod_vy[-1] * k * twod_v[-1]) # calculations to subtract velocity based on drag is commented out because it is acting weird idk why
+    omega = np.arccos(np.dot(p0, p1) / (np.linalg.norm(p0) * np.linalg.norm(p1)))
+    d = sin(omega)
+    s0 = sin((1 - t) * omega)
+    s1 = sin(t * omega)
     
-    x = twod_x[-1] + (twod_vx[-1] * twod_dt) + (0.5 * twod_ax * (twod_dt**2)) # calculates new x position based on velocity and acceleration
-    twod_x.append(x)
-    
-    y = twod_y[-1] + (twod_vy[-1] * twod_dt) + (0.5 * twod_ay * (twod_dt**2)) # calculates new y position based on velocity and acceleration
-    twod_y.append(y)
-    
-    v_x = twod_vx[-1] + (twod_ax * twod_dt) # calculates new x velocity based on acceleration
-    twod_vx.append(v_x)
-    
-    v_y = twod_vy[-1] + (twod_ay * twod_dt) # calculates new y velocity based on acceleration
-    twod_vy.append(v_y)
-    
-    v = sqrt((twod_vx[-1]**2) + (twod_vy[-1]**2)) # calculates overall velocity based on x and y velocities
-    twod_v.append(v)
+    return (p0 * s0 + p1 * s1) / d
 
-# prints first and last positions to console
-print(f"({twod_vx[0]}, {twod_vy[0]}, {twod_v[0]})")
-print(f"({twod_vx[-1]}, {twod_vy[-1]}, {twod_v[-1]})")
+dt = t_max / (datapoints - 1)
 
-# removes height of first projectile from all values to make it easier to plott on a 2d graph (basically just lowers it down to start at (0,0))
-plotting_twod_y = []
-first_y = twod_y[0]
-for i, pos in enumerate(twod_y):
-    plotting_twod_y.append(twod_y[i] - first_y)
-
-# create plotting dataframe
-df = {
-    "x": pd.Series(twod_x),
-    "y": pd.Series(plotting_twod_y)
-}
-
-# plot 2d projectile trajectory graph
-chart = alt.Chart(pd.DataFrame(df)).mark_circle().encode(
-    x='x',
-    y='y'
-)
-
-# plot 2d graph
-st.altair_chart(chart, use_container_width=True)
-
-# making a zip of the x and y values to make it easier to plot the spheres - the z values are all 0
-# example of what this looks like: [[x1, y1, z1], [x2, y2, z2], ...] where all z values start as 0
-vectors = list(zip(twod_x, plotting_twod_y, [0]*len(twod_x)))
-print(f"Vectors: {vectors[0], vectors[-1]}")
-
-# rotate vectors so the motion is aligned with planetary surface - *rot* stands for rotation
-lon_change = lon_0_deg + 180 # longitude is measured between -180 and 180, so this makes it 0 through 360
-x_rot_angle = 270 - lon_change # I got this through trial and error as how to get the rotation angle right
-x_rot_angle = radians(x_rot_angle) # converts rotation angle to radians
-x_rot_matrix = [ # rotation matrix about x axis
-    [cos(x_rot_angle), -sin(x_rot_angle), 0],
-    [sin(x_rot_angle), cos(x_rot_angle), 0],
-    [0, 0, 1]
-]
-y_rot_angle = lat_0_rad # also got this through trial and error
-y_rot_matrix = [ # rotation matrix about y axis
-    [cos(y_rot_angle), 0, sin(y_rot_angle)],
-    [0, 1, 0],
-    [-sin(y_rot_angle), 0, cos(y_rot_angle)]
-]
-
-
-for i, vector in enumerate(vectors):
-    vectors[i] = np.dot(
-        vector, np.dot(x_rot_matrix, y_rot_matrix)
-    ) # does matrix multiplication with the original xyz vector and the result of the matrix multiplication of the two rotation matrices
-    
-
-displaced_distance = [x_0 - twod_x[0], y_0 - plotting_twod_y[0], z_0] # calculates distance from the inputtted launch point to current position of projectile launch, as the position changes when rotating the vectors
-
-# makes a new list of vectors, and transforms the rotated vectors so that the initial launch point is the same as the inputted launch point using the variable defined above
-positioned_vectors = []
-for vector in vectors:
-    temp = []
-    for original, transform in zip(vector, displaced_distance):
-        temp.append(original + transform)
-    positioned_vectors.append(temp)
-
-print(f"Positioned vectors: {positioned_vectors[0], positioned_vectors[-1]}") # prints starting and landing locations of projectile
-print(f"Original location: {x_0, y_0, z_0}")
-
-
-# Everything that plots the projectile motion is below:
-
-
-print(f"Num vectors: {len(positioned_vectors)}") # prints number of points to be plotted to console
-for pos in positioned_vectors: # plots a sphere at each point in the trajectory - resolution is low to make it run faster
-    sphere = pv.Sphere(radius=10000000, center=(pos[0]*1000, pos[1]*1000, pos[2]*1000), theta_resolution=10, phi_resolution=10)
-    pl.add_mesh(sphere, color='yellow', opacity=1) # yellow contrasts with Earth so that you can easily see the spheres
+for i in range(datapoints + 1):
+    t = i * dt
+    if 0 <= t <= 1:
+        point = slerp_unit_vectors(np.array([x_0, y_0, z_0]), np.array([x_n, y_n, z_n]), t)
+        sphere = pv.Sphere(radius = 100000000, center = (point[0]*1000, point[1]*1000, point[2]*1000), theta_resolution=10, phi_resolution=10)
+        pl.add_mesh(sphere, color='orange', opacity=0.5)
 
 # Display the plot
 
-# > Locally (on machine):
-pl.show_axes()
-pl.show()
-pl.close()
+## > Locally (on machine):
+### pl.show_axes()
+### pl.show()
+### pl.close()
 
-# > On website (is a little slower, will switch to this once the whole 3d thing is fully implemented):
-# stpyvista(pl, use_container_width=True)
+## > On website:
+stpyvista(pl, use_container_width=True)
