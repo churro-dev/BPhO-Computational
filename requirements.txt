@@ -5,5 +5,5 @@ altair==5.3.0
 streamlit-tags==1.2.8
 pyvista==0.44.1
 stpyvista==0.0.19
-numpy==1.5.3
+numpy==1.22.0
 streamlit_theme==0.58.0
